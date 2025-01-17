@@ -1,0 +1,1 @@
+export type PaymentMethodOption = "reference" | "multicaixa-express";
