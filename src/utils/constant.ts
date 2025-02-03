@@ -18,6 +18,10 @@ export const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
 
+export const VISIT_FEE = 3000;
+
+export const MAX_FILTER_PRICE = 200000000;
+
 // propertyType - Apartamento
 // propertyType - casa
 // propertyType - Vivenda

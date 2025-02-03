@@ -8,12 +8,11 @@ import { SearchPageHeaderContainer } from "@/components/search-page-header/searc
 import { cn } from "@/lib/utils";
 import { CardProperty } from "@/components/card-property";
 import { usePropertiesWithStatusTrue } from "@/services/hooks/use-property";
-import { FilterProvider } from "@/contexts/filter-provider";
-import { useFilter } from "@/contexts/filter-provider";
+import { FilterProvider, useFilter } from "@/contexts/filter-provider";
 import { LoaderContent } from "@/components/map/loader";
 import { SkeletonCardProperty } from "@/components/skeleton/skeleton-card-property";
 
-const Map = dynamic(() => import("@/components/map/property-map"), {
+const MapView = dynamic(() => import("@/components/map/property-map"), {
   // loading: () => <p>O map está carregando...</p>,
   loading: () => <LoaderContent />,
   ssr: false,
@@ -26,6 +25,8 @@ function HomeContent() {
 
   const filteredProperties = data ? filterProperties(data) : [];
 
+  console.log(data);
+
   return (
     <main className="flex flex-col font-[family-name:var(--font-nunito-sans)] h-screen">
       <Header />
@@ -37,7 +38,7 @@ function HomeContent() {
             "z-30": activeMobileView === "map",
           })}
         >
-          <Map data={filteredProperties} />
+          <MapView data={filteredProperties} />
         </div>
         <div className="absolute lg:static top-0 w-full lg:w-[600px] h-full lg:h-auto shadow-xl z-10 lg:z-30 overflow-scroll bg-zinc-50">
           <div className="flex flex-col p-4">

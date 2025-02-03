@@ -81,6 +81,8 @@ export function useAuth() {
   const signUpMutation = useMutation({
     mutationFn: (data: SignUpRequest) => authService.signUp(data),
     onSuccess: () => {
+      queryClient.invalidateQueries(); // Invalida todas as queries globais
+      queryClient.clear(); 
       router.push("/auth/sign-in");
     },
   });
@@ -148,7 +150,9 @@ export function useAuth() {
     isAuthenticated: auth.isAuthenticated(),
     hasRole: auth.hasRole,
     signOut: () => {
-      auth.clear();
+      queryClient.invalidateQueries(); // Invalida todas as queries globais
+      queryClient.clear(); // Limpa completamente o cache (opcional)
+      auth.clear(); 
       updateAuthState(); // Atualiza o estado no Zustand
       router.push("/");
     },

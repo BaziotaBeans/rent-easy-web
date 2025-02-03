@@ -13,8 +13,8 @@ export const schedulingService = {
     return response.data;
   },
 
-  async getAll(): Promise<Schedule[]> {
-    const response = await api.get<Schedule[]>("/scheduling/");
+  async getAll(): Promise<ScheduleResponse[]> {
+    const response = await api.get<ScheduleResponse[]>("/scheduling/");
     return response.data;
   },
 
@@ -25,10 +25,15 @@ export const schedulingService = {
     return response.data;
   },
 
-  async getByCompany(companyId: string): Promise<Schedule[]> {
-    const response = await api.get<Schedule[]>(
+  async getByCompany(companyId: string): Promise<ScheduleResponse[]> {
+    const response = await api.get<ScheduleResponse[]>(
       `/scheduling/findByCompany/${companyId}`
     );
+    return response.data;
+  },
+
+  async getLast(): Promise<ScheduleResponse> {
+    const response = await api.get("/scheduling/last");
     return response.data;
   },
 

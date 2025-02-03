@@ -65,8 +65,8 @@ export function SearchBarFilter() {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            role="combobox"
-            aria-expanded={open}
+            // role="combobox"
+            // aria-expanded={open}
             className={cn(
               "w-full justify-between bg-white text-zinc-500 hover:bg-zinc-100",
               "h-10 pl-6 border-[1.5px] border-zinc-200 rounded-lg focus:border-dashed",

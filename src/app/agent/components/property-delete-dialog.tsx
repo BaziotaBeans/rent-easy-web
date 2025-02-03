@@ -1,40 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { TriangleAlert } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { usePropertyDelete } from "@/services/hooks/use-property";
+import { PropertyResponse } from "@/types/property";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   propertyTitle: string;
+  data: PropertyResponse;
 }
 
 export function PropertyDeleteDialog({
   open,
   onOpenChange,
   propertyTitle,
+  data,
 }: Props) {
   const [value, setValue] = useState("");
 
-  const handleDelete = () => {
+  const [isLoadingDeleteProperty, setIsLoadingDeleteProperty] = useState(false);
+
+  const { mutateAsync: deleteProperty } = usePropertyDelete();
+
+  const handleDelete = async () => {
     if (value.trim() !== propertyTitle) return;
 
-    onOpenChange(false);
-    toast({
-      title: "The following user has been deleted:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">
-            {JSON.stringify(propertyTitle, null, 2)}
-          </code>
-        </pre>
-      ),
-    });
+    setIsLoadingDeleteProperty(true);
+    try {
+      await deleteProperty(data.property.pkProperty);
+      toast.success("Imóvel excluído com sucesso.");
+    } catch (error) {
+      toast.error("Não foi possível excluir o imóvel. Tente novamente.");
+    } finally {
+      onOpenChange(false);
+      setIsLoadingDeleteProperty(false);
+    }
   };
 
   return (
@@ -42,6 +49,7 @@ export function PropertyDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
+      isLoading={isLoadingDeleteProperty}
       disabled={value.trim() !== propertyTitle}
       title={
         <span className="text-destructive">
@@ -55,27 +63,27 @@ export function PropertyDeleteDialog({
       desc={
         <div className="space-y-4">
           <p className="mb-2">
-            Are you sure you want to delete{" "}
+            Tem certeza de que deseja excluir{" "}
             <span className="font-bold">{propertyTitle}</span>?
             <br />
-            This action will permanently remove the user with the role of{" "}
-            <span className="font-bold">{propertyTitle}</span> from the system.
-            This cannot be undone.
+            Esta ação removerá permanentemente o imóvel com o nome de{" "}
+            <span className="font-bold">{data.property.title}</span> do sistema.
+            Isto não pode ser desfeito.
           </p>
 
           <Label className="my-2">
-            Username:
+            Título do imóvel:
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter username to confirm deletion."
+              placeholder="Digite o título do imóvel para a exlusão"
             />
           </Label>
 
           <Alert variant="destructive">
-            <AlertTitle>Warning!</AlertTitle>
+            <AlertTitle>Aviso!</AlertTitle>
             <AlertDescription>
-              Please be carefull, this operation can not be rolled back.
+              Tenha cuidado, esta operação não pode ser revertida.
             </AlertDescription>
           </Alert>
         </div>

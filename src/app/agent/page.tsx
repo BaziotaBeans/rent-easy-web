@@ -41,8 +41,6 @@ export default function Page() {
 
   if (isEmpty) return <EmptyHandler onRetry={refetch} />;
 
-  console.log(data);
-
   const filteredData = filterAndSortProperties(data, searchTerm, propertyTypes, sortOrder);
 
   return (

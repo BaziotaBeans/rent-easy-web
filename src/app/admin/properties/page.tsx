@@ -9,6 +9,8 @@ export default function PropertiesPage() {
 
   const dataProperties = data || [];
 
+  console.log(data);
+
   return (
     <div className="space-y-6">
       <PropertiesDataTable data={dataProperties}/>

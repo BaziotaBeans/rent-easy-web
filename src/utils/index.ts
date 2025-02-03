@@ -68,3 +68,35 @@ export const getPropertyType = (type: string) => {
 export const checkIfPropertyTypeIsSelected = (value: string) => {
   return ["apartment", "home", "terrain", "villa"].includes(value);
 };
+
+
+/**
+ * Verifica se um array está vazio.
+ * @param arr - O array a ser verificado.
+ * @returns Retorna `true` se o array estiver vazio, caso contrário, retorna `false`.
+ */
+export function isArrayEmpty<T>(arr: T[]): boolean {
+  return arr.length === 0;
+}
+
+export function generateRandomReference(): string {
+  const leftLimit = 48; // Código ASCII para '0'
+  const rightLimit = 57; // Código ASCII para '9'
+  const targetStringLength = 9;
+
+  const randomReference = Array.from({ length: targetStringLength }, () => {
+    // Gera um número aleatório entre o limite inferior e superior (inclusivo)
+    const randomCharCode = Math.floor(
+      Math.random() * (rightLimit - leftLimit + 1) + leftLimit
+    );
+    return String.fromCharCode(randomCharCode); // Converte o código para um caractere
+  }).join("");
+
+  return randomReference;
+}
+
+export function showPropertyStatusName(role: string): string {
+  if (role === 'PUBLISHED') return 'Disponível';
+  if (role === 'RENTED') return 'Indisponível';
+  return 'Pendente';
+}

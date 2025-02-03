@@ -21,6 +21,8 @@ export default function Page() {
     return null; // Evita a renderização no servidor
   }
 
+  const schedulingData = Array.isArray(data) ? data : [];
+
   return (
     <main className="flex flex-col py-10 gap-6">
       <h1 className="text-3xl text-zinc-600 font-bold">Agendamentos</h1>
@@ -42,14 +44,14 @@ export default function Page() {
       )}
 
       {/* Mensagem de Lista Vazia */}
-      {!isLoading && !isError && data?.length === 0 && (
+      {!isLoading && !isError && schedulingData?.length === 0 && (
         <div className="text-zinc-500 text-center font-medium">
           Nenhum agendamento encontrado.
         </div>
       )}
 
       {/* Lista de Agendamentos */}
-      {!isLoading && !isError && data?.map((item) => (
+      {!isLoading && !isError && schedulingData?.map((item) => (
         <SchedulingCard key={item.pkScheduling} data={item} />
       ))}
     </main>

@@ -65,14 +65,14 @@ export function AccountPopover({ isWhite }: AccountPopoverProps) {
               Contractos
             </Link>
           </li>
-          <li className="flex items-center">
+          {/* <li className="flex items-center">
             <Link
               className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
               href="/myrenteasy/favorites"
             >
               Favoritos
             </Link>
-          </li>
+          </li> */}
           <li className="flex items-center">
             <Link
               className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"

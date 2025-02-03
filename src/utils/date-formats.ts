@@ -43,20 +43,6 @@ export function showWeekDay(weekDay: string): string {
   return weekDayMap[weekDay] || "Dia inválido";
 }
 
-// export function getWeekDay(weekDay: string): string {
-//   const weekDayMap: Record<string, string> = {
-//     "Segunda-feira": "MONDAY",
-//     "Terça-feira": "TUESDAY",
-//     "Quarta-feira": "WEDNESDAY",
-//     "Quinta-feira": "THURSDAY",
-//     "Sexta-feira": "FRIDAY",
-//     "Sábado": "SATURDAY",
-//     "Domingo": "SUNDAY",
-//   };
-
-//   return weekDayMap[weekDay] || "INVALID_DAY";
-// }
-
 export function getWeekDay(weekDay: string): string {
   if (weekDay == "Segunda-feira") {
     return "MONDAY";

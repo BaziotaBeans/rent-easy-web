@@ -23,7 +23,7 @@ export default function AdminLayout({
           isCollapsed ? "md:w-16" : "md:w-64"
         )}>
           <div className="flex h-full flex-col">
-            <div className="border-b px-6 py-4">
+            <div className="border-b px-6 py-4 h-16">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Building className="h-6 w-6" />

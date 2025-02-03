@@ -59,6 +59,8 @@ export interface Property {
   bathroom: number;
   vacancy: number;
   price: number;
+  condominiumFee: number;
+  conservation: string;
   totalArea: number;
   buildingArea: number;
   description: string;
@@ -74,6 +76,7 @@ export interface Property {
   createdAt: string;
   latitude: number;
   longitude: number;
+  propertyType: string;
 }
 
 export interface PropertySchedule {
@@ -91,4 +94,5 @@ export interface ScheduleResponse {
   user: User;
   note: string | null;
   createdAt: string;
+  scheduledDate: string;
 }

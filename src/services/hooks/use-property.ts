@@ -31,6 +31,33 @@ export function useCreateProperty() {
   });
 }
 
+export function usePropertyDelete() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: propertyService.delete,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["properties"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["properties-with-status-true"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["properties-by-company-id"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["property-by-id"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["property-schedule"],
+      });
+    },
+    onError: (error) => {
+      console.error("Erro ao excluir imóvel:", error);
+    },
+  });
+}
 export function useProperties() {
   const queryKey = ["properties"];
 

@@ -28,6 +28,7 @@ export function CardProperty({ id, data }: CardPropertyProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const { onOpen } = usePropertyDetailDialog();
 
@@ -58,14 +59,22 @@ export function CardProperty({ id, data }: CardPropertyProps) {
             <CarouselContent>
               {data.images.map((image, index) => (
                 <CarouselItem key={`${index}-${image.url}`}>
-                  <Image
-                    src={image.url}
-                    alt=""
-                    objectFit="cover"
-                    className="object-cover w-full h-32 rounded-sm select-none"
-                    width={244}
-                    height={100}
-                  />
+                  <div className="relative w-full h-32 rounded-sm overflow-hidden">
+                    <Image
+                      src={image.url}
+                      alt=""
+                      className="object-cover w-full h-32 rounded-sm select-none"
+                      width={244}
+                      height={100}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgAB/1h8JAAAAABJRU5ErkJggg=="
+                      onLoad={() => setIsImageLoaded(true)} // Atualiza o estado quando a imagem carrega
+                    />
+                    {/* Efeito de shimmer enquanto a imagem carrega */}
+                    {!isImageLoaded && (
+                      <div className="absolute inset-0 shimmer"></div>
+                    )}
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -123,7 +132,7 @@ export function CardProperty({ id, data }: CardPropertyProps) {
         </CardContent>
       </Card>
 
-      <PropertyDetailDialog id={id} data={data}/>
+      <PropertyDetailDialog id={id} data={data} />
     </>
   );
 }

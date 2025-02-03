@@ -135,6 +135,7 @@ export function PropertyCard({ data }: PropertyCardProps) {
       <PropertyDeleteDialog
         open={openDeleteDialog}
         propertyTitle={data.property.title}
+        data={data}
         onOpenChange={(state) => {
           setOpenDeleteDialog(state);
         }}

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
 import { Button } from "../ui/button";
+import { ButtonFilterBedsBaths } from "./button-filter-beds-baths";
 import { ButtonFilterPrice } from "./button-filter-price";
 import { ButtonFilterPurpose } from "./button-filter-purpose";
 import { ButtonFilterType } from "./button-filter-type";
@@ -17,6 +16,7 @@ export function SearchPageHeaderContainer() {
       <SearchBarFilter />
       <ButtonFilterPurpose />
       <ButtonFilterPrice />
+      <ButtonFilterBedsBaths/>
       <ButtonFilterType />
       <Button className="h-10" variant="primary" onClick={resetFilters}>
         Redefinir filtros

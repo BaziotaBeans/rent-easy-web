@@ -10,6 +10,8 @@ export default function Page() {
 
   const { data, isLoading, isError } = useContractByUser(user?.pkUser!);
 
+  const contractsData = Array.isArray(data) ? data : [];
+
   if (isLoading) {
     return (
       <div className="flex flex-col py-10 gap-6">
@@ -31,12 +33,21 @@ export default function Page() {
     );
   }
 
+  if (!isLoading && !isError && contractsData.length === 0) {
+    return (
+      <main className="flex flex-col pt-20 pb-10 gap-6 items-center justify-center">
+        <h1 className="text-3xl text-zinc-600 font-bold">Contractos</h1>
+        <span className="text-base">Nenhum contracto encontrado.</span>
+      </main>
+    );
+  }
+
   return (
     <main className="flex flex-col py-10 gap-6">
       <h1 className="text-3xl text-zinc-600 font-bold">Contractos</h1>
 
-      {data?.map((item, index) => (
-        <ContractCard key={item.pkContract} data={item} index={index + 1}/>
+      {contractsData?.map((item, index) => (
+        <ContractCard key={item.pkContract} data={item} index={index + 1} />
       ))}
     </main>
   );

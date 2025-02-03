@@ -7,8 +7,8 @@ export const paymentService = {
     return response.data;
   },
 
-  async getAll(): Promise<Payment[]> {
-    const response = await api.get<Payment[]>("/payments/");
+  async getAll(): Promise<PaymentResponse[]> {
+    const response = await api.get<PaymentResponse[]>("/payments/");
     return response.data;
   },
 

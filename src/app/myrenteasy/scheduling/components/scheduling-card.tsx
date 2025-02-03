@@ -24,7 +24,7 @@ export function SchedulingCard({ data }:SchedulingCardProps) {
             {data.property.title}
           </h2>
           <span className="text-sm text-zinc-500">{data.property.address}</span>
-          <span className="text-sm text-zinc-500">Data: {formatDateToLong(data.createdAt)}</span>
+          <span className="text-sm text-zinc-500">Data: {formatDateToLong(data.scheduledDate)}</span>
         </div>
 
         <span className="ml-auto text-primary-base font-semibold text-base px-4">

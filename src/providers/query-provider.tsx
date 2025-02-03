@@ -7,7 +7,12 @@ import { ReactNode } from 'react';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      //staleTime: 1000 * 60 * 5, // 5 minutes
+      // Faz a query ser sempre buscada sem usar cache
+      staleTime: 0, // Considera os dados obsoletos imediatamente
+      refetchOnMount: 'always', // Sempre faz refetch ao montar
+      refetchOnWindowFocus: true, // Refetch ao ganhar o foco (opcional)
+      refetchOnReconnect: true, // Refetch ao reconectar a internet
     },
   },
 });

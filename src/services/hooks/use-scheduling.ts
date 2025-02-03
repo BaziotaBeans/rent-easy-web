@@ -28,6 +28,7 @@ export function useCreateScheduling() {
       queryClient.invalidateQueries({ queryKey: ["scheduling"] });
       queryClient.invalidateQueries({ queryKey: ["last-scheduling"] });
       queryClient.invalidateQueries({ queryKey: ["schedulings"] });
+      queryClient.invalidateQueries({ queryKey: ["scheduling-last"] });
 
       console.log(data);
     },
@@ -60,6 +61,7 @@ export function useDeleteScheduling() {
       queryClient.invalidateQueries({ queryKey: ["scheduling"] });
       queryClient.invalidateQueries({ queryKey: ["last-scheduling"] });
       queryClient.invalidateQueries({ queryKey: ["schedulings"] });
+      queryClient.invalidateQueries({ queryKey: ["scheduling-last"] });
 
       console.log("Agendamento excluído com sucesso.");
     },
@@ -85,6 +87,16 @@ export function useSchedulingByCompany(companyId: string) {
     queryKey: ["scheduling-by-company", companyId],
     queryFn: async () => {
       const response = await schedulingService.getByCompany(companyId);
+      return response;
+    },
+  });
+}
+
+export function useSchedulingLast() {
+  return useQuery({
+    queryKey: ["scheduling-last"],
+    queryFn: async () => {
+      const response = await schedulingService.getLast();
       return response;
     },
   });

@@ -18,21 +18,43 @@ export function ButtonFilterPurpose() {
   const { setPurpose } = useFilter();
   const [rentChecked, setRentChecked] = React.useState<Checked>(false);
   const [buyChecked, setBuyChecked] = React.useState<Checked>(false);
+  const [allChecked, setAllChecked] = React.useState<Checked>(true); // "Todos" selecionado por padrão
 
   React.useEffect(() => {
-    if (rentChecked) setPurpose("rent");
-    else if (buyChecked) setPurpose("buy");
-    else setPurpose(null);
+    if (rentChecked) {
+      setPurpose("rent");
+      setAllChecked(false); // Desmarca "Todos" quando "Aluguel" é selecionado
+    } else if (buyChecked) {
+      setPurpose("buy");
+      setAllChecked(false); // Desmarca "Todos" quando "Compra" é selecionado
+    } else {
+      setPurpose(null); // Define o propósito como null quando "Todos" é selecionado
+      setAllChecked(true); // Marca "Todos" quando nenhum outro filtro está ativo
+    }
   }, [rentChecked, buyChecked, setPurpose]);
 
   const handleRentChange = (checked: Checked) => {
     setRentChecked(checked);
-    if (checked) setBuyChecked(false);
+    if (checked) {
+      setBuyChecked(false); // Desmarca "Compra" quando "Aluguel" é selecionado
+      setAllChecked(false); // Desmarca "Todos" quando "Aluguel" é selecionado
+    }
   };
 
   const handleBuyChange = (checked: Checked) => {
     setBuyChecked(checked);
-    if (checked) setRentChecked(false);
+    if (checked) {
+      setRentChecked(false); // Desmarca "Aluguel" quando "Compra" é selecionado
+      setAllChecked(false); // Desmarca "Todos" quando "Compra" é selecionado
+    }
+  };
+
+  const handleAllChange = (checked: Checked) => {
+    setAllChecked(checked);
+    if (checked) {
+      setRentChecked(false); // Desmarca "Aluguel" quando "Todos" é selecionado
+      setBuyChecked(false); // Desmarca "Compra" quando "Todos" é selecionado
+    }
   };
 
   return (
@@ -47,6 +69,12 @@ export function ButtonFilterPurpose() {
         <DropdownMenuLabel>Finalidade</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuCheckboxItem
+          checked={allChecked}
+          onCheckedChange={handleAllChange}
+        >
+          Todos
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
           checked={rentChecked}
           onCheckedChange={handleRentChange}
         >
@@ -56,7 +84,7 @@ export function ButtonFilterPurpose() {
           checked={buyChecked}
           onCheckedChange={handleBuyChange}
         >
-          Comprar
+          Compra
         </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>

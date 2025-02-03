@@ -46,7 +46,7 @@ export default function PropertyListing({ data }: PropertyListingProps) {
       <div className="relative flex items-stretch gap-4 mt-6 transition-all">
         <div className="space-y-8 mt-6 w-full">
           <div className="space-y-4">
-            <PriceBadge price={data?.property.price} />
+            <PriceBadge price={data?.property.price} type={data?.property?.propertyType}/>
 
             <PropertyTitleVerify title={data?.property.title} />
           </div>
@@ -61,6 +61,7 @@ export default function PropertyListing({ data }: PropertyListingProps) {
               bedrooms={data?.property.room}
               parking={data?.property.vacancy}
               suits={data?.property.suits}
+              type={data?.property?.propertyType}
             />
           </section>
 

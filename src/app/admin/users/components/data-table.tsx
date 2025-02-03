@@ -35,6 +35,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { useUsers } from "@/services/hooks/use-users";
 import { UserResponse } from "@/types/user";
 
@@ -43,128 +49,6 @@ interface Role {
   pkRole: string;
   name: string;
 }
-
-// 📄 Dados de exemplo para tabela
-// const data: UserResponse[] = [
-//   {
-//     pkUser: "1",
-//     username: "joaosilva",
-//     fullName: "João Silva",
-//     email: "joao.silva@example.com",
-//     phone: "+351912345678",
-//     password: "********",
-//     nif: "123456789",
-//     address: "Rua das Flores, 123",
-//     nationality: "Portuguesa",
-//     maritalStatus: "Solteiro",
-//     urlDocument: "https://example.com/doc1.pdf",
-//     roles: [{ pkRole: "admin", name: "Administrador" }],
-//   },
-//   {
-//     pkUser: "2",
-//     username: "mariaribeiro",
-//     fullName: "Maria Ribeiro",
-//     email: "maria.ribeiro@example.com",
-//     phone: "+351987654321",
-//     password: "********",
-//     nif: "987654321",
-//     address: "Avenida Central, 456",
-//     nationality: "Portuguesa",
-//     maritalStatus: "Casado",
-//     urlDocument: "https://example.com/doc2.pdf",
-//     roles: [{ pkRole: "user", name: "Usuário" }],
-//   },
-// ]
-
-// 📊 Definição das colunas
-export const columns: ColumnDef<UserResponse>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Selecionar todos"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Selecionar linha"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "fullName",
-    header: "Nome Completo",
-    cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
-  },
-  {
-    accessorKey: "username",
-    header: "Nome de Usuário",
-    cell: ({ row }) => <div>{row.getValue("username")}</div>,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "phone",
-    header: "Telefone",
-    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
-  },
-  {
-    accessorKey: "nif",
-    header: "NIF",
-    cell: ({ row }) => <div>{row.getValue("nif")}</div>,
-  },
-  {
-    accessorKey: "address",
-    header: "Endereço",
-    cell: ({ row }) => <div>{row.getValue("address")}</div>,
-  },
-  {
-    accessorKey: "roles",
-    header: "Papéis",
-    cell: ({ row }) =>
-      (row.getValue("roles") as Role[]).map((role) => role.name).join(", "),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const user = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.pkUser)}
-            >
-              Copiar ID do Usuário
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Visualizar detalhes</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
 
 // 📋 Componente de Tabela
 export function UsersDataTable() {
@@ -175,13 +59,129 @@ export function UsersDataTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [roleFilter, setRoleFilter] = React.useState<string>("");
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false); // Estado para controlar o Sheet
+  const [selectedUser, setSelectedUser] = React.useState<UserResponse | null>(
+    null
+  ); // Estado para armazenar o usuário selecionado
 
   const { data } = useUsers();
 
   const dataUsers = data || [];
 
+  const handleViewDetails = (user: UserResponse) => {
+    setSelectedUser(user); // Define o usuário selecionado
+    setIsSheetOpen(true); // Abre o Sheet
+  };
+
+  // 📊 Definição das colunas
+  const columns: ColumnDef<UserResponse>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Selecionar todos"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Selecionar linha"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "fullName",
+      header: "Nome Completo",
+      cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
+    },
+    {
+      accessorKey: "username",
+      header: "Nome de Usuário",
+      cell: ({ row }) => <div>{row.getValue("username")}</div>,
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    },
+    {
+      accessorKey: "phone",
+      header: "Telefone",
+      cell: ({ row }) => <div>{row.getValue("phone")}</div>,
+    },
+    {
+      accessorKey: "nif",
+      header: "NIF",
+      cell: ({ row }) => <div>{row.getValue("nif")}</div>,
+    },
+    {
+      accessorKey: "address",
+      header: "Endereço",
+      cell: ({ row }) => <div>{row.getValue("address")}</div>,
+    },
+    {
+      accessorKey: "roles",
+      header: "Papéis",
+      cell: ({ row }) =>
+        (row.getValue("roles") as Role[])
+          .map((role) => {
+            if (role.name === "ROLE_COMPANY") return "Empresa";
+            if (role.name === "ROLE_USER") return "Usuário";
+            if (role.name === "ROLE_ADMIN") return "Administrador";
+            return role.name;
+          })
+          .join(", "),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const user = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Ações</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(user.pkUser)}
+              >
+                Copiar ID do Usuário
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleViewDetails(user)}>
+                Visualizar detalhes
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
+  const filteredData = React.useMemo(() => {
+    if (!roleFilter) return dataUsers;
+    return dataUsers.filter((user) =>
+      user.roles.some((role) => role.name === roleFilter)
+    );
+  }, [dataUsers, roleFilter]);
+
   const table = useReactTable<UserResponse>({
-    data: dataUsers,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -197,13 +197,36 @@ export function UsersDataTable() {
   return (
     <>
       <div className="w-full">
-        <Input
-          placeholder="Filtrar por nome..."
-          onChange={(e) =>
-            table.getColumn("fullName")?.setFilterValue(e.target.value)
-          }
-          className="max-w-sm my-4"
-        />
+        <div className="flex gap-4 my-4">
+          <Input
+            placeholder="Filtrar por nome..."
+            onChange={(e) =>
+              table.getColumn("fullName")?.setFilterValue(e.target.value)
+            }
+            className="max-w-sm"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Filtrar por Papel <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setRoleFilter("")}>
+                Todos
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRoleFilter("ROLE_ADMIN")}>
+                Administrador
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRoleFilter("ROLE_USER")}>
+                Usuário
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRoleFilter("ROLE_COMPANY")}>
+                Agente
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -232,6 +255,66 @@ export function UsersDataTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Sheet para exibir detalhes do usuário */}
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Detalhes do Usuário</SheetTitle>
+          </SheetHeader>
+          {selectedUser && (
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Nome Completo:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.fullName}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Nome de Usuário:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.username}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Email:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.email}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Telefone:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.phone}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">NIF:</span>{" "}
+                <span className="text-sm font-medium">{selectedUser.nif}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Endereço:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.address}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Papéis:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.roles
+                    .map((role) => {
+                      if (role.name === "ROLE_COMPANY") return "Empresa";
+                      if (role.name === "ROLE_USER") return "Usuário";
+                      if (role.name === "ROLE_ADMIN") return "Administrador";
+                      return role.name;
+                    })
+                    .join(", ")}
+                </span>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
