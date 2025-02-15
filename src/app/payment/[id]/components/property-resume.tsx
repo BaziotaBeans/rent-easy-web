@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { usePaymentStore } from "@/store/payment-store";
 import { PropertyResponse } from "@/types/property";
 import { formatPriceToKwanza } from "@/utils/format-price";
-import { MapPin, BedDouble, Bath, CarFront, Ratio } from "lucide-react";
+import { MapPin, BedDouble, Bath, CarFront, Ratio, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getTotalValueToPaidInProperty } from "@/utils";
@@ -16,6 +16,7 @@ import { useCreateOrder } from "@/services/hooks/use-order";
 import { OrderRequest } from "@/types/order";
 import { useAuth } from "@/hooks/use-auth";
 import { PaymentMethod } from "@/utils/enum";
+import { motion } from "framer-motion";
 
 interface PropertyResumeProps {
   data: PropertyResponse;
@@ -38,36 +39,37 @@ export function PropertyResume({ data }: PropertyResumeProps) {
 
   const nextURL = `/payment/${id}/${selectedType}`;
 
-  console.log(data);
-
   const submitPayment = async () => {
     setIsLoadingPayment(true);
 
-    const formattedData: OrderRequest = {
-      userId: user!.pkUser,
-      entidade: "00750",
-      paymentMethod: PaymentMethod[selectedType],
-      propertyId: data.property.pkProperty,
-      totalValue: getTotalValueToPaidInProperty({ data: data }),
-    };
+    // Delay para melhorar UX
+    setTimeout(async () => {
+      const formattedData: OrderRequest = {
+        userId: user!.pkUser,
+        entidade: "00750",
+        paymentMethod: PaymentMethod[selectedType],
+        propertyId: data.property.pkProperty,
+        totalValue: getTotalValueToPaidInProperty({ data: data }),
+      };
 
-    try {
-      await mutateAsync(formattedData);
+      try {
+        await mutateAsync(formattedData);
 
-      toast.success("Sucesso", {
-        description: "Pedido criado com sucesso.",
-      });
+        toast.success("Sucesso", {
+          description: "Pedido criado com sucesso.",
+        });
 
-      router.push(nextURL);
-    } catch (error) {
-      toast.error("Erro", {
-        description: "Ocorreu um erro ao criar o pedido.",
-      });
+        router.push(nextURL);
+      } catch (error) {
+        toast.error("Erro", {
+          description: "Ocorreu um erro ao criar o pedido.",
+        });
 
-      console.log(error);
-    } finally {
-      setIsLoadingPayment(false);
-    }
+        console.log(error);
+      } finally {
+        setIsLoadingPayment(false);
+      }
+    }, 1200);
   };
 
   return (
@@ -157,14 +159,59 @@ export function PropertyResume({ data }: PropertyResumeProps) {
         </span>
       </div>
 
-      <Button
+      {/* <Button
         variant={"primary"}
         size={"lg"}
         onClick={submitPayment}
         loading={isLoadingPayment}
       >
         Continuar
-      </Button>
+      </Button> */}
+      {/* Animação do Botão */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          animate={
+            isLoadingPayment
+              ? { scale: 0.95, opacity: 0.7 }
+              : { scale: 1, opacity: 1 }
+          }
+          transition={{ duration: 0.3 }}
+        >
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={submitPayment}
+            disabled={isLoadingPayment}
+            className="relative w-full"
+          >
+            {isLoadingPayment ? (
+              <>
+                <Loader2 className="animate-spin w-4 h-4 mr-2" /> Processando...
+              </>
+            ) : (
+              "Continuar"
+            )}
+          </Button>
+        </motion.div>
+      </motion.div>
+
+      {/* Efeito de bolha animada */}
+      {isLoadingPayment && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.5,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="w-4 h-4 bg-primary-base rounded-full mx-auto mt-2"
+        />
+      )}
 
       <p className="text-xs text-zinc-500">
         Ao clicar no botão acima, você declara concordar com nossos{" "}

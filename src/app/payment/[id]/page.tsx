@@ -20,8 +20,6 @@ export default function Page() {
     router.back();
   };
 
-  console.log(data);
-
   return (
     <main className="h-full">
       <MaxWidthWrapper className="flex flex-col gap-10 py-6">
