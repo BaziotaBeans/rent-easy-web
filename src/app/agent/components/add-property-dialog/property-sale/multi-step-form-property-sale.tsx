@@ -103,7 +103,7 @@ export function MultiStepFormPropertySale() {
             fkCompany: user!.pkUser,
             fkPropertyType: appConstant.propertyTypeSale,
             images: uploadedURLS,
-            propertyStatus: "PUBLISHED",
+            propertyStatus: "STANDBY",
             schedules: convertWeekDays(updatedData.schedules),
             latitude: updatedData.latitude,
             longitude: updatedData.longitude,

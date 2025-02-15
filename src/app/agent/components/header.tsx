@@ -3,20 +3,18 @@
 import { AccountPopover } from "@/components/account-popover";
 import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { RentHomeIcon } from "@/components/svg/rent-home-icon";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { FaUserCircle } from "react-icons/fa";
 
 export function Header() {
   return (
     <header className="sticky top-0 w-full z-50 bg-primary-base py-4 px-6 h-16  border-b border-b-zinc-200">
       <MaxWidthWrapper className="flex items-center justify-between">
-        <Link href="/">
+        <Link href="/agent">
           <Image
             src="/RentEasy-White.png"
             alt=""
-            className="object-cover h-9"
+            className="object-cover h-9 aspect-square"
             width={130}
             height={36}
           />

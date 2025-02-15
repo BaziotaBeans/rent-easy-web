@@ -48,4 +48,12 @@ export const propertyService = {
   async delete(id: string): Promise<void> {
     await api.delete(`/property/${id}`);
   },
+
+  async updatePropertyStatus(
+    id: string,
+    data: { propertyStatus: string }
+  ): Promise<Property> {
+    const response = await api.put<Property>(`/property/${id}/status`, data);
+    return response.data;
+  },
 };

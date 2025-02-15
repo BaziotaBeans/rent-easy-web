@@ -51,9 +51,9 @@ export function OrderReferenceCard({ data }: OrderReferenceCardProps) {
   }, [remainingTime]);
 
   return (
-    <div className="flex-1 bg-zinc-50  w-full rounded-2xl p-6 flex flex-col gap-6">
+    <div className="lg:order-2 order-1 flex-1 bg-zinc-50  w-full rounded-2xl p-6 flex flex-col gap-6">
       <div className="flex flex-col gap-2 items-center">
-        <h1 className="text-2xl font-bold text-zinc-700">
+        <h1 className="text-2xl font-bold text-zinc-700 text-center">
           Pague com Referencia
         </h1>
         <span className="text-sm text-center text-zinc-500">

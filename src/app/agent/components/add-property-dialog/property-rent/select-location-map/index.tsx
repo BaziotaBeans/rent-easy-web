@@ -6,9 +6,6 @@ import {
   MapContainer,
   TileLayer,
   Marker,
-  Popup,
-  Circle,
-  Polygon,
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
@@ -21,7 +18,6 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchMap } from "@/contexts/search-map-provider";
-import { AnimatedMarker } from "@/components/animated-marker";
 
 const customIcon = new L.DivIcon({
   className: "",

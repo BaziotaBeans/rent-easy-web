@@ -17,7 +17,7 @@ export function ContractCard({ data, index }: ContractCardProps) {
 
   return (
     <ContractDetailSheet dataContract={data}>
-      <Card className="bg-zinc-50 relative flex items-center gap-6 py-6 px-4 shadow-none transition-all cursor-pointer hover:bg-zinc-50 hover:border-primary-base hover:bg-primary-base/5">
+      <Card className="bg-zinc-50 relative flex lg:flex-row flex-col lg:items-center gap-6 py-6 px-4 shadow-none transition-all cursor-pointer hover:bg-zinc-50 hover:border-primary-base hover:bg-primary-base/5">
         <ContractStatus type={contractStatus} />
         <svg
           width="64"
@@ -50,8 +50,8 @@ export function ContractCard({ data, index }: ContractCardProps) {
               {data.property.title}
             </span>
           </div>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4">
+          <div className="flex lg:items-center lg:flex-row flex-col justify-between w-full lg:gap-0 gap-2">
+            <div className="flex sm:items-center sm:gap-4 gap-2 sm:flex-row flex-col">
               <span className="flex items-center gap-2 text-zinc-500 text-sm font-medium">
                 <Calendar className="w-4 h-4" /> Data de inicio:{" "}
                 {formatDate(data.startDate)}
@@ -66,7 +66,7 @@ export function ContractCard({ data, index }: ContractCardProps) {
             </div>
 
             {!data.signaturePropertyCustomer && (
-              <span className="text-sm text-orange-600 font-semibold bg-orange-200 rounded-2xl px-3 py-1">
+              <span className="text-sm text-orange-600 font-semibold bg-orange-200 rounded-2xl px-3 py-1 self-start">
                 Precisa assinar o contracto
               </span>
             )}

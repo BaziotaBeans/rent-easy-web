@@ -1,10 +1,8 @@
 "use client";
 
-import { Pencil, Trash2, Eye, Ratio } from "lucide-react";
+import { Pencil, Trash2, Eye, Ratio, BedDouble, Bath, CarFront } from "lucide-react";
 import Image from "next/image";
-import { BedDouble, Bath, CarFront } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SelectPropertyStatus } from "./select-property-status";
 import { PropertyDetailSheet } from "./property-detail/property-detail-sheet";
 import { useState } from "react";
 import { PropertyDeleteDialog } from "./property-delete-dialog";
@@ -95,7 +93,6 @@ export function PropertyCard({ data }: PropertyCardProps) {
                   </>
                 )}
               </div>
-              <SelectPropertyStatus />
             </div>
           </div>
         </div>

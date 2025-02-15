@@ -1,13 +1,6 @@
 import { PropertyResponse } from "@/types/property";
 
 // src/utils/filterProperties.ts
-interface Property {
-  property: {
-    title: string;
-    propertyType: string;
-    createdAt: string;
-  };
-}
 
 type SortOrder = "recent" | "asc" | "desc";
 
@@ -15,6 +8,7 @@ export const filterAndSortProperties = (
   data: PropertyResponse[],
   searchTerm: string,
   propertyTypes: string[],
+  propertySoldOrRented: string[],
   sortOrder: SortOrder
 ): PropertyResponse[] => {
   return data
@@ -27,7 +21,20 @@ export const filterAndSortProperties = (
         propertyTypes.length === 0 ||
         propertyTypes.includes(item.property.propertyType ?? '');
 
-      return matchesTitle && matchesType;
+      const isPropertyStatusRented = item.property.propertyStatus == 'RENTED';
+
+      const isPropertySold = item.property.fkPropertyTypeEntity.designation == 'Terreno' || item.property.fkPropertyTypeEntity.designation == 'Venda';
+      
+      const isPropertyRented = item.property.fkPropertyTypeEntity.designation == 'Arrendamento';
+
+      const propertySoldOrRentedToCompareName = isPropertyStatusRented && isPropertySold ? 'Vendidos' : isPropertyStatusRented && isPropertyRented ? 'Alugados' : '';
+
+      const matchesSoldOrRented = 
+      propertySoldOrRented.length === 0 ||
+      propertySoldOrRented.includes(propertySoldOrRentedToCompareName);
+        
+
+      return matchesTitle && matchesType && matchesSoldOrRented;
     })
     .sort((a, b) => {
       const dateA = new Date(a.property.createdAt).getTime();

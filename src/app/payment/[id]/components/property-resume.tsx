@@ -71,8 +71,8 @@ export function PropertyResume({ data }: PropertyResumeProps) {
   };
 
   return (
-    <div className="max-w-[380px] w-full flex flex-col gap-4 rounded-xl p-5 bg-white">
-      <div className="flex items-center gap-3">
+    <div className="lg:max-w-[380px] w-full flex flex-col gap-4 rounded-xl p-5 bg-white">
+      <div className="flex items-center gap-3 truncate">
         <Image
           src={data.images[0].url}
           alt={data.property.title}
@@ -82,7 +82,7 @@ export function PropertyResume({ data }: PropertyResumeProps) {
         />
 
         <div className="flex flex-col gap-1">
-          <span className="text-zinc-800 text-base font-semibold truncate">
+          <span className="text-zinc-800 text-base font-semibold">
             {data.property.title}
           </span>
           <span className="grid grid-cols-[16px_1fr] w-full items-center gap-2 text-xs text-zinc-600">
@@ -169,7 +169,8 @@ export function PropertyResume({ data }: PropertyResumeProps) {
       <p className="text-xs text-zinc-500">
         Ao clicar no botão acima, você declara concordar com nossos{" "}
         <Link
-          href="/"
+          href="/terms-of-service"
+          target="_blank"
           className="text-primary-base hover:underline hover:underline-offset-2"
         >
           Termos de Serviço

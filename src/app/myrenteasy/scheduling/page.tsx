@@ -25,7 +25,7 @@ export default function Page() {
 
   return (
     <main className="flex flex-col py-10 gap-6">
-      <h1 className="text-3xl text-zinc-600 font-bold">Agendamentos</h1>
+      <h1 className="text-2xl sm:text-3xl text-zinc-600 font-bold">Agendamentos</h1>
 
       {/* Skeleton Loader */}
       {isLoading && (

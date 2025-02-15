@@ -36,13 +36,18 @@ export function FilterProvider({ children }: { children: ReactNode }) {
 
   const resetFilters = () => {
     setSearchQuery("");
+
     setPriceRange({
       min: 0,
       max: MAX_FILTER_PRICE,
     });
+    
     setSelectedTypes([]);
+    
     setPurpose(null);
+    
     setBedrooms(0);
+    
     setBathrooms(0);
   };
 

@@ -64,11 +64,11 @@ export default function Page() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <h1 className="text-3xl text-zinc-600 font-bold">
+      <h1 className="md:text-3xl text-2xl text-zinc-600 font-bold">
         Pedido {data?.reference}
       </h1>
 
-      <div className="flex items-stretch gap-6">
+      <div className="flex flex-col lg:flex-row items-stretch gap-6">
         <PropertyResume data={data} />
         <OrderReferenceCard data={data}/>
       </div>

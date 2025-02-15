@@ -1,6 +1,9 @@
 "use client";
 
+
 import * as React from "react";
+import { toast } from "sonner";
+import { useUpdatePropertyStatus } from "@/services/hooks/use-property";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -31,7 +34,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -61,7 +63,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { showPropertyStatusName } from "@/utils";
+import { normalizeStatus, showPropertyStatusName, statusColors } from "@/utils";
 import { formatPriceToKwanza } from "@/utils/format-price";
 import { Separator } from "@/components/ui/separator";
 import { ImPriceTags } from "react-icons/im";
@@ -165,10 +167,65 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
     {
       accessorKey: "propertyStatus",
       header: "Status",
-      cell: ({ row }) => (
-        <div>{showPropertyStatusName(row.getValue("propertyStatus"))}</div>
-      ),
+      cell: ({ row }) => {
+        const property = row.original;
+        const [updating, setUpdating] = React.useState(false);
+        const updatePropertyStatus = useUpdatePropertyStatus();
+  
+        const handleStatusChange = (newStatus: string) => {
+          if (property.propertyStatus === "RENTED") {
+            toast.error("Não é possível alterar o status de um imóvel alugado.");
+            return;
+          }
+  
+          setUpdating(true);
+          updatePropertyStatus.mutate(
+            { id: property.pkProperty, propertyStatus: newStatus },
+            {
+              onSettled: () => setUpdating(false),
+              onSuccess: () => toast.success("Status atualizado com sucesso!"),
+              onError: () => toast.error("Erro ao atualizar status."),
+            }
+          );
+        };
+  
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={updating}>
+                {updating ? <Loader className="animate-spin w-4 h-4" /> : showPropertyStatusName(property.propertyStatus)}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {["PUBLISHED", "STANDBY", "DENIED"].map((status) => (
+                <DropdownMenuItem key={status} onClick={() => handleStatusChange(status)}>
+                  {showPropertyStatusName(status)}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
+    // {
+    //   accessorKey: "propertyStatus",
+    //   header: "Status",
+    //   cell: ({ row }) => {
+    //     const rawStatus: string = row.getValue("propertyStatus");
+    //     const status = normalizeStatus(rawStatus);
+
+    //     return (
+    //       <span
+    //         className={`px-2 py-1 rounded-md text-sm font-medium  ${
+    //           statusColors[status] || "bg-gray-100 text-gray-700"
+    //         }`}
+    //       >
+    //         {showPropertyStatusName(status)}
+    //       </span>
+    //     );
+    //   },
+    // },
     {
       id: "actions",
       enableHiding: false,
@@ -283,17 +340,20 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
                 Dispinível
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setSelectedStatus("RENTED")}>
-                Indisponível
+                Ocupado
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setSelectedStatus("STANDBY")}>
-                Aguardando
+                Pendente
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSelectedStatus("DENIED")}>
+                NEGADO
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button variant="outline" onClick={resetFilters}>
             <X className="h-4 w-4" />
           </Button>
-          <ExportButton data={filteredData}/>
+          <ExportButton data={filteredData} />
         </div>
       </div>
 
@@ -386,7 +446,7 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Endereço</span>{" "}
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium truncate max-w-48 w-full">
                   {selectedProperty.address}
                 </span>
               </div>
@@ -402,31 +462,42 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
                   {selectedProperty.province}
                 </span>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Tipo</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedProperty.propertyType}
+                </span>
+              </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm flex items-center gap-2">
-                  <BedDouble className="w-4 h-4" /> Quartos
-                </span>{" "}
-                <span className="text-sm font-medium">
-                  {selectedProperty.room}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm flex items-center gap-2">
-                  <Bath className="w-4 h-4" /> Banheiros
-                </span>{" "}
-                <span className="text-sm font-medium">
-                  {selectedProperty.bathroom}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm flex items-center gap-2">
-                  <Toilet className="w-4 h-4" /> Suítes
-                </span>{" "}
-                <span className="text-sm font-medium">
-                  {selectedProperty.suits}
-                </span>
-              </div>
+              {selectedProperty.propertyType !== "Terreno" && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm flex items-center gap-2">
+                      <BedDouble className="w-4 h-4" /> Quartos
+                    </span>{" "}
+                    <span className="text-sm font-medium">
+                      {selectedProperty.room}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm flex items-center gap-2">
+                      <Bath className="w-4 h-4" /> Banheiros
+                    </span>{" "}
+                    <span className="text-sm font-medium">
+                      {selectedProperty.bathroom}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm flex items-center gap-2">
+                      <Toilet className="w-4 h-4" /> Suítes
+                    </span>{" "}
+                    <span className="text-sm font-medium">
+                      {selectedProperty.suits}
+                    </span>
+                  </div>
+                </>
+              )}
+
               <div className="flex items-center justify-between">
                 <span className="text-sm flex items-center gap-2">
                   <Scan className="w-4 h-4" /> Área Total
@@ -435,22 +506,28 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
                   {selectedProperty.totalArea}m²
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm flex items-center gap-2">
-                  <CarFront className="w-4 h-4" /> Vagas
-                </span>{" "}
-                <span className="text-sm font-medium">
-                  {selectedProperty.vacancy}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm flex items-center gap-2">
-                  <ScanHeart className="w-4 h-4" /> Conservação
-                </span>{" "}
-                <span className="text-sm font-medium">
-                  {selectedProperty.conservation}
-                </span>
-              </div>
+              {selectedProperty.propertyType !== "Terreno" && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm flex items-center gap-2">
+                    <CarFront className="w-4 h-4" /> Vagas
+                  </span>{" "}
+                  <span className="text-sm font-medium">
+                    {selectedProperty.vacancy}
+                  </span>
+                </div>
+              )}
+
+              {selectedProperty.propertyType !== "Terreno" && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm flex items-center gap-2">
+                    <ScanHeart className="w-4 h-4" /> Conservação
+                  </span>{" "}
+                  <span className="text-sm font-medium">
+                    {selectedProperty.conservation ?? "-"}
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
                 <span className="text-sm flex items-center gap-2">Agente</span>{" "}
                 <span className="text-sm font-medium">
@@ -459,9 +536,30 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm flex items-center gap-2">
+                  Email do Agente
+                </span>{" "}
+                <span className="text-sm font-medium truncate max-w-48 w-full">
+                  {selectedProperty.companyEntity.user.email}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm flex items-center gap-2">
+                  Contacto do Agente
+                </span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedProperty.companyEntity.user.phone}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm flex items-center gap-2">
                   <Loader className="w-4 h-4" /> Status
                 </span>{" "}
-                <span className="text-sm font-medium bg-primary-base/10 rounded-xl py-1 px-2 text-primary-base">
+                <span
+                  className={`px-2 py-1 rounded-md text-sm font-medium ${
+                    statusColors[selectedProperty.propertyStatus] ||
+                    "bg-gray-100 text-gray-700"
+                  }`}
+                >
                   {showPropertyStatusName(selectedProperty.propertyStatus)}
                 </span>
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { format } from "date-fns";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,16 +14,30 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, X } from "lucide-react";
-
+import { ArrowUpDown, CalendarIcon, MoreHorizontal, X } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatPriceToKwanza } from "@/utils/format-price";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -32,120 +47,150 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PaymentResponse } from "@/types/payment";
+import { usePaymentsCompanyUserAssociated } from "@/services/hooks/use-payment";
+import { useAuth } from "@/hooks/use-auth";
 
-// Novo tipo de dados
-export type Payment = {
-  id: string;
-  paymentDate: string;
-  reference: string;
-  totalValue: number;
-  paymentMethod: string;
-  property: string;
-  payer: string;
-};
-
-// Dados de exemplo
-const data: Payment[] = [
-  {
-    id: "18569d7b-8765-4dcf-9699-621846546123",
-    paymentDate: "2025-01-01",
-    reference: "878245247",
-    totalValue: 1200,
-    paymentMethod: "Credit Card",
-    property: "Apartment A203",
-    payer: "John Doe",
-  },
-  {
-    id: "b274d7f8-7458-4fa9-85de-7fcac18f3c11",
-    paymentDate: "2025-01-02",
-    reference: "982374897",
-    totalValue: 850,
-    paymentMethod: "Bank Transfer",
-    property: "House B102",
-    payer: "Jane Smith",
-  },
-  // Adicione mais itens para teste
-];
-
-// Definição das colunas
-export const columns: ColumnDef<Payment>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "paymentDate",
-    header: "Data de Pagamento",
-    cell: ({ row }) => <div>{row.getValue("paymentDate")}</div>,
-  },
-  {
-    accessorKey: "reference",
-    header: "Referência",
-    cell: ({ row }) => <div>{row.getValue("reference")}</div>,
-  },
-  {
-    accessorKey: "totalValue",
-    header: "Valor Total",
-    cell: ({ row }) => {
-      const value = parseFloat(row.getValue("totalValue"));
-      const formatted = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(value);
-
-      return <div className="text-left font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "paymentMethod",
-    header: "Método de Pagamento",
-    cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
-  },
-  {
-    accessorKey: "property",
-    header: "Imóvel",
-    cell: ({ row }) => <div>{row.getValue("property")}</div>,
-  },
-  {
-    accessorKey: "payer",
-    header: "Pagante",
-    cell: ({ row }) => <div>{row.getValue("payer")}</div>,
-  },
-];
-
-export function PaymentDataTable() {
+export function PaymentsDataTable() {
+  const { user } = useAuth();
+  const { data } = usePaymentsCompanyUserAssociated(user?.pkUser ?? "");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [selectedPayment, setSelectedPayment] =
+    React.useState<PaymentResponse | null>(null);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [filterInput, setFilterInput] = React.useState("");
-  const [selectedColumn, setSelectedColumn] = React.useState<string | null>(
-    "reference"
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+    undefined
   );
 
+  const handleViewDetails = (payment: PaymentResponse) => {
+    setSelectedPayment(payment);
+    setIsSheetOpen(true);
+  };
+
+  const resetFilters = () => {
+    setSelectedDate(undefined);
+  };
+
+  const columns: ColumnDef<PaymentResponse>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Selecionar todos"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Selecionar linha"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Data de Pagamento
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"));
+        return <div>{date.toLocaleDateString("pt-BR")}</div>;
+      },
+    },
+    {
+      accessorKey: "totalValue",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Valor
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div>{formatPriceToKwanza(row.getValue("totalValue"))}</div>
+      ),
+    },
+    {
+      accessorKey: "paymentMethod",
+      header: "Método de Pagamento",
+      cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
+    },
+    {
+      accessorKey: "user",
+      header: "Cliente",
+      cell: ({ row }) => <div>{row.original?.user?.fullName}</div>,
+    },
+    {
+      accessorKey: "reference",
+      header: "Referência",
+      cell: ({ row }) => <div>{row.getValue("reference")}</div>,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const payment = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Ações</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(payment.pkPayment)}
+              >
+                Copiar ID do Pagamento
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleViewDetails(payment)}>
+                Ver detalhes
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
+  const filteredData = React.useMemo(() => {
+    return data.filter((payment) => {
+      const matchesDate = selectedDate
+        ? format(new Date(payment.createdAt), "yyyy-MM-dd") ===
+          format(selectedDate, "yyyy-MM-dd")
+        : true;
+
+      return matchesDate;
+    });
+  }, [data, selectedDate]);
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -163,78 +208,43 @@ export function PaymentDataTable() {
     },
   });
 
-  const availableColumns = [
-    { key: "paymentDate", label: "Data de Pagamento" },
-    { key: "reference", label: "Referência" },
-    { key: "totalValue", label: "Valor Total" },
-    { key: "paymentMethod", label: "Método de Pagamento" },
-    { key: "property", label: "Imóvel" },
-    { key: "payer", label: "Pagante" },
-  ];
-
   return (
-    <div className="w-full">
-      <div className="flex items-center gap-4 justify-between py-4 w-full">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              Filtrar por:{" "}
-              {selectedColumn
-                ? availableColumns.find((col) => col.key === selectedColumn)
-                    ?.label
-                : "Selecione"}{" "}
-              <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {availableColumns.map((col) => (
-              <DropdownMenuItem
-                key={col.key}
-                onClick={() => setSelectedColumn(col.key)}
-              >
-                {col.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div>
+      <div className="flex items-center justify-between gap-4 py-4">
+        <Input
+          placeholder="Filtrar por cliente..."
+          value={(table.getColumn("user")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("user")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
 
-        <div className="relative max-w-lg w-full">
-          <Input
-            placeholder={`Filtrar por ${
-              selectedColumn
-                ? availableColumns.find((col) => col.key === selectedColumn)
-                    ?.label
-                : "campo selecionado"
-            }...`}
-            value={filterInput}
-            onChange={(event) => {
-              setFilterInput(event.target.value);
-              if (selectedColumn) {
-                table
-                  .getColumn(selectedColumn)
-                  ?.setFilterValue(event.target.value);
-              }
-            }}
-            className=" w-full"
-          />
-          {filterInput && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setFilterInput("");
-                if (selectedColumn) {
-                  table.getColumn(selectedColumn)?.setFilterValue("");
-                }
-              }}
-              className="absolute right-1 top-1/2 -translate-y-1/2"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={resetFilters}>
+            <X className="h-4 w-4" />
+          </Button>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate
+                  ? format(selectedDate, "dd/MM/yyyy")
+                  : "Filtrar por data"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -254,7 +264,7 @@ export function PaymentDataTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -283,7 +293,6 @@ export function PaymentDataTable() {
           </TableBody>
         </Table>
       </div>
-
       <div className="flex items-center justify-between py-4">
         <span className="text-sm text-muted-foreground">
           Página {table.getState().pagination.pageIndex + 1} de{" "}

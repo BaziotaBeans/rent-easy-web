@@ -78,7 +78,7 @@ export function SchedulingDetailSheet({
     >
       <SheetTrigger asChild>{children}</SheetTrigger>
 
-      <SheetContent className="sm:max-w-[600px] flex flex-col gap-4 px-0">
+      <SheetContent className="sm:max-w-[600px] w-full flex flex-col gap-4 px-0">
         <SheetHeader className="px-4">
           <SheetTitle>Detalhes do agendamento</SheetTitle>
           <SheetDescription className="sr-only">

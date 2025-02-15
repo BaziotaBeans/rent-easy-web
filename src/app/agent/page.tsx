@@ -25,7 +25,7 @@ export default function Page() {
     user?.pkUser!
   );
 
-  const { searchTerm, propertyTypes, sortOrder } = usePropertyFilter();
+  const { searchTerm, propertyTypes, sortOrder, propertySoldOrRented } = usePropertyFilter();
 
   const { onOpen } = useAddPropertyDialogDialog();
 
@@ -41,7 +41,7 @@ export default function Page() {
 
   if (isEmpty) return <EmptyHandler onRetry={refetch} />;
 
-  const filteredData = filterAndSortProperties(data, searchTerm, propertyTypes, sortOrder);
+  const filteredData = filterAndSortProperties(data, searchTerm, propertyTypes, propertySoldOrRented, sortOrder);
 
   return (
     <>
@@ -60,7 +60,7 @@ export default function Page() {
 
         <SearchProperty />
 
-        <FilterProperty />
+        <FilterProperty data={data}/>
 
         <div className="flex flex-col gap-3">
           {filteredData.map((item) => (

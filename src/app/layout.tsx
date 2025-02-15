@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  Nunito,
-  Nunito_Sans,
-  Alex_Brush,
-  Great_Vibes,
-} from "next/font/google";
+import { Geist, Geist_Mono, Alex_Brush } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,12 +8,7 @@ import { OverlayFocusProvider } from "@/contexts/overlay-focus-provider";
 import { SearchMapProvider } from "@/contexts/search-map-provider";
 import { PropertyDetailDialogProvider } from "@/contexts/property-detail-dialog-store-provider";
 import { SignInDialogProvider } from "@/contexts/sign-in-dialog-provider";
-
-const greatVibes = Great_Vibes({
-  variable: "--font-great-vibes",
-  subsets: ["latin"],
-  weight: "400",
-});
+import AppProgressBarProvider from "@/providers/app-progress-bar-provider";
 
 const alexBrush = Alex_Brush({
   variable: "--font-alex-brush",
@@ -38,18 +26,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-});
-
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Renteasy",
+  title: {
+    absolute: "", // if the template is set ignore all
+    default: "Home | Renteasy",
+    template: "%s | Renteasy",
+  },
   description: "Plataforma de aluguel de imóvel",
 };
 
@@ -63,19 +45,17 @@ export default function RootLayout({
       <SearchMapProvider>
         <SignInDialogProvider>
           <OverlayFocusProvider>
-            {/* <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-sans)]`}
-          > */}
             <body
-              // className={`${nunitoSans.variable} ${nunito.variable} antialiased font-[family-name:var(--font-nunito-sans)]`}
               className={`${geistSans.variable} ${geistMono.variable} ${alexBrush.variable} antialiased font-[family-name:var(--font-geist-sans)]`}
             >
               <QueryProvider>
-                <PropertyDetailDialogProvider>
-                  {children}
-                </PropertyDetailDialogProvider>
+                <AppProgressBarProvider>
+                  <PropertyDetailDialogProvider>
+                    {children}
+                  </PropertyDetailDialogProvider>
+                </AppProgressBarProvider>
                 <Toaster />
-                <ToasterSonner/>
+                <ToasterSonner />
               </QueryProvider>
             </body>
           </OverlayFocusProvider>

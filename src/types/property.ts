@@ -1,6 +1,6 @@
 import { Company } from "./company";
 
-export type PropertyStatus = "PUBLISHED" | "STANDBY" | "RENTED";
+export type PropertyStatus = "PUBLISHED" | "STANDBY" | "RENTED" | "DENIED";
 
 export interface Schedule {
   dayOfWeek: string;

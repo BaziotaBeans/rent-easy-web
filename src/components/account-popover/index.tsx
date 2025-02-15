@@ -1,4 +1,4 @@
-import { House, LayoutGrid, LogOut } from "lucide-react";
+import { LayoutGrid, LogOut } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -18,7 +18,9 @@ interface AccountPopoverProps {
 export function AccountPopover({ isWhite }: AccountPopoverProps) {
   const { user, signOut } = useAuth();
 
-  console.log(user);
+  const isCompanyUser = user?.roles.includes("ROLE_COMPANY");
+
+  const isUser = user?.roles.includes("ROLE_USER");
 
   return (
     <Popover>
@@ -52,7 +54,9 @@ export function AccountPopover({ isWhite }: AccountPopoverProps) {
           <li className="flex items-center ">
             <Link
               className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
-              href="/myrenteasy/scheduling"
+              href={`${
+                isCompanyUser ? "/agent/scheduling" : "/myrenteasy/scheduling"
+              }`}
             >
               Agendamentos
             </Link>
@@ -60,7 +64,9 @@ export function AccountPopover({ isWhite }: AccountPopoverProps) {
           <li className="flex items-center">
             <Link
               className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
-              href="/myrenteasy/contracts"
+              href={`${
+                isCompanyUser ? "/agent/contracts" : "/myrenteasy/contracts"
+              }`}
             >
               Contractos
             </Link>
@@ -73,20 +79,34 @@ export function AccountPopover({ isWhite }: AccountPopoverProps) {
               Favoritos
             </Link>
           </li> */}
-          <li className="flex items-center">
-            <Link
-              className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
-              href="/myrenteasy/orders"
-            >
-              Pedidos
-            </Link>
-          </li>
+          {isUser && (
+            <li className="flex items-center">
+              <Link
+                className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
+                href="/myrenteasy/orders"
+              >
+                Pedidos
+              </Link>
+            </li>
+          )}
+          
+          {isCompanyUser && (
+            <li className="flex items-center">
+              <Link
+                className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
+                href="/agent/payments"
+              >
+                Pagamentos
+              </Link>
+            </li>
+          )}
+
           <Separator />
 
           <li className="flex items-center">
             <Link
               className="w-full px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
-              href="/myrenteasy/settings/"
+              href={`${isCompanyUser ? '/agent/settings' : '/myrenteasy/settings/'}`}
             >
               Conta
             </Link>
@@ -94,7 +114,7 @@ export function AccountPopover({ isWhite }: AccountPopoverProps) {
           <li className="flex items-center">
             <Link
               className="w-full flex items-center justify-between px-3 py-2 cursor-pointer text-sm font-medium transition-all hover:bg-zinc-50"
-              href="/"
+              href={`${isCompanyUser ? '/agent' : '/'}`}
             >
               Home <LayoutGrid className="w-4 h-4" />
             </Link>

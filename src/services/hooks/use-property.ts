@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { propertyService } from "../property.service";
+import { PropertyAllResponse } from "@/types/property-all";
 
 export function useCreateProperty() {
   const queryClient = useQueryClient();
@@ -117,3 +118,59 @@ export function usePropertySchedule(id: string) {
     enabled: !!id,
   });
 }
+
+// export function useUpdatePropertyStatus() {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: ({
+//       id,
+//       propertyStatus,
+//     }: {
+//       id: string;
+//       propertyStatus: string;
+//     }) => propertyService.updatePropertyStatus(id, { propertyStatus }),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["properties"] });
+//       queryClient.invalidateQueries({
+//         queryKey: ["properties-with-status-true"],
+//       });
+//       queryClient.invalidateQueries({ queryKey: ["properties-by-company-id"] });
+//       queryClient.invalidateQueries({ queryKey: ["property-by-id"] });
+//     },
+//     onError: (error) => {
+//       console.error("Erro ao atualizar status do imóvel:", error);
+//     },
+//   });
+// }
+
+export function useUpdatePropertyStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, propertyStatus }: { id: string; propertyStatus: string }) =>
+      propertyService.updatePropertyStatus(id, { propertyStatus }),
+
+    onSuccess: (data, { id, propertyStatus }) => {
+      // Atualiza apenas o item específico na lista de propriedades
+      queryClient.setQueryData(["properties"], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return oldData.map((property: PropertyAllResponse) =>
+          property.pkProperty === id ? { ...property, propertyStatus } : property
+        );
+      });
+
+      // Atualiza também a query individual do imóvel
+      queryClient.setQueryData(["property-by-id", id], (oldData: any) => ({
+        ...oldData,
+        propertyStatus,
+      }));
+    },
+
+    onError: (error) => {
+      console.error("Erro ao atualizar status do imóvel:", error);
+    },
+  });
+}
+

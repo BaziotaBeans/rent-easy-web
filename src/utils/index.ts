@@ -69,7 +69,6 @@ export const checkIfPropertyTypeIsSelected = (value: string) => {
   return ["apartment", "home", "terrain", "villa"].includes(value);
 };
 
-
 /**
  * Verifica se um array está vazio.
  * @param arr - O array a ser verificado.
@@ -96,7 +95,58 @@ export function generateRandomReference(): string {
 }
 
 export function showPropertyStatusName(role: string): string {
-  if (role === 'PUBLISHED') return 'Disponível';
-  if (role === 'RENTED') return 'Indisponível';
-  return 'Pendente';
+  if (role === "PUBLISHED") return "Disponível";
+  if (role === "RENTED") return "Ocupado";
+  if (role === "STANDBY") return "Pendente";
+  if (role === "DENIED") return "Negado";
+  return "Todos";
+}
+
+export function countProperties(data: PropertyResponse[]) {
+  let publishedCount = 0;
+  let soldCount = 0;
+  let rentedCount = 0;
+
+  data.forEach((item) => {
+    const property = item.property;
+
+    // Contar imóveis com status PUBLISHED
+    if (property.propertyStatus === "PUBLISHED") {
+      publishedCount++;
+    }
+
+    // Contar imóveis vendidos
+    if (
+      property.propertyStatus === "RENTED" &&
+      (property.fkPropertyTypeEntity.designation === "Terreno" ||
+        property.fkPropertyTypeEntity.designation === "Venda")
+    ) {
+      soldCount++;
+    }
+
+    // Contar imóveis arrendados
+    if (
+      property.propertyStatus === "RENTED" &&
+      property.fkPropertyTypeEntity.designation === "Arrendamento"
+    ) {
+      rentedCount++;
+    }
+  });
+
+  return {
+    publishedCount,
+    soldCount,
+    rentedCount,
+  };
+}
+
+export const statusColors: Record<string, string> = {
+  PUBLISHED: "bg-green-100 text-green-700",
+  RENTED: "bg-orange-100 text-orange-700",
+  DENIED: "bg-red-100 text-red-700",
+  STANDBY: "bg-gray-100 text-gray-700",
+};
+
+export function normalizeStatus(status: string): string {
+  return status.toUpperCase().trim(); // Transforma em maiúsculas e remove espaços extras
 }

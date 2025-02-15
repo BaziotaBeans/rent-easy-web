@@ -9,7 +9,7 @@ import { stepAddTerrainSchemas } from "@/validations/stepAddTerrainSchemas";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { appConstant } from "@/utils/constant";
+import { appConstant, VISIT_FEE } from "@/utils/constant";
 import { useImageFileUpload } from "@/hooks/use-image-file-upload";
 import { PropertyRequest } from "@/types/property";
 import { usePropertyFilterStore } from "@/store/use-property-filter-store";
@@ -90,10 +90,13 @@ export function MultiStepFormTerrain() {
             fkCompany: user!.pkUser,
             fkPropertyType: appConstant.propertyTypeGround,
             images: uploadedURLS,
-            propertyStatus: "PUBLISHED",
+            propertyStatus: "STANDBY",
             schedules: convertWeekDays(updatedData.schedules),
             latitude: updatedData.latitude,
             longitude: updatedData.longitude,
+            propertyType: "Terreno",
+            condominiumFee: VISIT_FEE,
+            conservation: ""
           };
 
           await mutateAsync(formattedData);

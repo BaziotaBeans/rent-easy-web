@@ -2,43 +2,33 @@ import { Separator } from "@/components/ui/separator";
 import { OrderResponse } from "@/types/order";
 import { formatPriceToKwanza } from "@/utils/format-price";
 import { MapPin, BedDouble, Bath, CarFront } from "lucide-react";
-import Image from "next/image";
+
 import Link from "next/link";
 
 interface PropertyResumeProps {
-  data: OrderResponse
+  data: OrderResponse;
 }
 
-export function PropertyResume({ data }:PropertyResumeProps) {
+export function PropertyResume({ data }: PropertyResumeProps) {
   return (
-    <div className="max-w-[380px] w-full flex flex-col gap-4 rounded-xl p-5 bg-zinc-50">
-      <div className="flex items-center gap-3">
-        <Image
-          src="/img-1.png"
-          alt="Property Image"
-          className="object-cover w-20 h-20 rounded-lg"
-          height={173}
-          width={173}
-        />
-
-        <div className="flex flex-col gap-1">
-          <span className="text-zinc-800 text-base font-semibold">
-            {data?.property.title}
-          </span>
-          <span className="grid grid-cols-[16px_1fr] items-center gap-2 text-xs text-zinc-600">
-            <MapPin className="w-4 h-4 " />
-            {data?.property.address}
-          </span>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 text-sm">
-              <BedDouble className="w-4 h-4" /> {data?.property.room}
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Bath className="w-4 h-4" /> {data?.property.bathroom}
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <CarFront className="w-4 h-4" /> {data?.property.vacancy}
-            </div>
+    <div className="lg:order-1 order-2 lg:max-w-[380px] w-full flex flex-col gap-4 rounded-xl p-5 bg-zinc-50">
+      <div className="flex flex-col gap-1">
+        <span className="text-zinc-800 text-base font-semibold">
+          {data?.property.title}
+        </span>
+        <span className="grid grid-cols-[16px_1fr] items-center gap-2 text-xs text-zinc-600">
+          <MapPin className="w-4 h-4 " />
+          {data?.property.address}
+        </span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-sm">
+            <BedDouble className="w-4 h-4" /> {data?.property.room}
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Bath className="w-4 h-4" /> {data?.property.bathroom}
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <CarFront className="w-4 h-4" /> {data?.property.vacancy}
           </div>
         </div>
       </div>
@@ -89,7 +79,8 @@ export function PropertyResume({ data }:PropertyResumeProps) {
       <p className="text-xs text-zinc-500">
         Ao clicar no botão acima, você declara concordar com nossos{" "}
         <Link
-          href="/"
+          href="/terms-of-service"
+          target="_blank"
           className="text-primary-base hover:underline hover:underline-offset-2"
         >
           Termos de Serviço

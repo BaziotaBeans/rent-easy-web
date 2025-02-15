@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import { PropertySchedulingDialog } from "./property-scheduling-dialog";
 import { PropertyResponse } from "@/types/property";
 import { useSignInWithoutRedirectDialogDialog } from "@/store/useSignInWithoutRedirectDialog";
 import { SignInWithoutRedirectDialog } from "@/app/auth/components/sign-in-without-redirect-dialog";
 import { useAuthStore } from "@/store/use-auth-store";
+import { usePropertyDetailDialog } from "@/store/usePropertyDetailDialog";
 
 interface PropertyActionsProps {
   data: PropertyResponse;
@@ -16,15 +16,22 @@ interface PropertyActionsProps {
 
 export function PropertyActions({ data }: PropertyActionsProps) {
   const [isFixed, setIsFixed] = useState(false);
+
   const router = useRouter();
+
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   const [openPropertySchedulingDialog, setOpenPropertySchedulingDialog] =
     useState(false);
+
   const [
     signInWithoutRedirectDialogMessage,
     setSignInWithoutRedirectDialogMessage,
   ] = useState<string>("");
+
   const { onOpen } = useSignInWithoutRedirectDialogDialog();
+
+  const { onClose } = usePropertyDetailDialog();
 
   function handleOpenPropertySchedulingDialog() {
     if (isAuthenticated) {
@@ -40,6 +47,7 @@ export function PropertyActions({ data }: PropertyActionsProps) {
   function handleGoToPayment() {
     if (isAuthenticated) {
       router.push(`/payment/${data.property.pkProperty}`);
+      onClose();
       return;
     }
     setSignInWithoutRedirectDialogMessage(

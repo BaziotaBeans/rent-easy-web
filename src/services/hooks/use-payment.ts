@@ -12,6 +12,7 @@ export function useCreatePayment() {
       queryClient.invalidateQueries({ queryKey: ["payments"] });
       queryClient.invalidateQueries({ queryKey: ["payment-by-reference"] });
       queryClient.invalidateQueries({ queryKey: ["payment-last"] });
+      queryClient.invalidateQueries({ queryKey: ["payments-company-user-associated"] });
 
       console.log(data);
     },
@@ -48,5 +49,17 @@ export function useLastPayment() {
       const response = await paymentService.getLastPayment();
       return response;
     },
+  });
+}
+
+export function usePaymentsCompanyUserAssociated(userId: string) {
+  return useQuery({
+    queryKey: ["payments-company-user-associated"],
+    queryFn: async () => {
+      const response = await paymentService.getCompanyUserAssociated(userId);
+      return response;
+    },
+    enabled:!!userId,
+    initialData: []
   });
 }

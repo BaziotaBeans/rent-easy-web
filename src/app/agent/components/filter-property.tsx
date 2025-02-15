@@ -10,11 +10,29 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { usePropertyFilter } from "@/store/use-property-agent-filter";
+import { PropertyResponse } from "@/types/property";
+import { countProperties } from "@/utils";
+import { Separator } from "@/components/ui/separator";
 
-export function FilterProperty() {
-  const { propertyTypes, sortOrder, togglePropertyType, setSortOrder } = usePropertyFilter();
+interface FilterPropertyProps {
+  data: PropertyResponse[];
+}
+
+export function FilterProperty({ data }: FilterPropertyProps) {
+  const {
+    propertyTypes,
+    sortOrder,
+    togglePropertyType,
+    setSortOrder,
+    propertySoldOrRented,
+    togglePropertySoldOrRented,
+  } = usePropertyFilter();
 
   const propertyOptions = ["Terreno", "Apartamento", "Casa", "Vivenda"];
+
+  const propertySoldOrRentedOptions = ["Alugados", "Vendidos"];
+
+  const { publishedCount, rentedCount, soldCount } = countProperties(data);
 
   return (
     <div className="flex items-center justify-between">
@@ -22,19 +40,25 @@ export function FilterProperty() {
         <span className="text-sm text-zinc-600 font-medium flex items-center gap-2">
           Activo
           <span className="text-zinc-500 text-xs font-medium bg-zinc-100 rounded-sm px-1">
-            6
+            {publishedCount}
           </span>
         </span>
         <span className="text-sm text-zinc-600 font-medium flex items-center gap-2">
-          Pendente
+          Alugados
           <span className="text-zinc-500 text-xs font-medium bg-zinc-100 rounded-sm px-1">
-            2
+            {rentedCount}
           </span>
         </span>
         <span className="text-sm text-zinc-600 font-medium flex items-center gap-2">
           Vendido
           <span className="text-zinc-500 text-xs font-medium bg-zinc-100 rounded-sm px-1">
-            3
+            {soldCount}
+          </span>
+        </span>
+        <span className="text-sm text-zinc-600 font-medium flex items-center gap-2">
+          Total
+          <span className="text-zinc-500 text-xs font-medium bg-zinc-100 rounded-sm px-1">
+            {data.length}
           </span>
         </span>
       </div>
@@ -46,7 +70,7 @@ export function FilterProperty() {
               <ListFilter className="w-4 h-4" /> Filtrar
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-44 flex flex-col gap-4">
+          <PopoverContent className="w-44 flex flex-col gap-4" side="bottom" >
             <span className="text-sm font-medium">Filtrar por tipo:</span>
 
             <div className="flex flex-col gap-4">
@@ -56,6 +80,21 @@ export function FilterProperty() {
                     id={type}
                     checked={propertyTypes.includes(type)}
                     onCheckedChange={() => togglePropertyType(type)}
+                  />
+                  <label htmlFor={type} className="text-sm">
+                    {type}
+                  </label>
+                </div>
+              ))}
+
+              <Separator />
+
+              {propertySoldOrRentedOptions.map((type) => (
+                <div key={type} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={type}
+                    checked={propertySoldOrRented.includes(type)}
+                    onCheckedChange={() => togglePropertySoldOrRented(type)}
                   />
                   <label htmlFor={type} className="text-sm">
                     {type}

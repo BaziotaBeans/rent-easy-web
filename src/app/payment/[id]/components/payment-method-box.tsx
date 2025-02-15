@@ -12,7 +12,7 @@ export function PaymentMethodBox() {
   const { selectedType, setSelectedType } = usePaymentStore();
 
   return (
-    <div className="flex-1 flex flex-col gap-4 rounded-xl p-6 bg-white">
+    <div className="flex-1 flex flex-col gap-4 rounded-xl p-6 bg-white w-full lg:w-auto">
       <h2 className="text-lg font-bold">Formas de pagamento</h2>
 
       <Separator />

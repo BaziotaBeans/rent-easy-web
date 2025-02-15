@@ -28,11 +28,11 @@ export default function Page() {
         <div className="flex items-center gap-2 mt-4">
           <button
             onClick={handleBack}
-            className="hover:bg-white h-9 w-9 flex items-center justify-center rounded-full transition-all"
+            className="hover:bg-white h-9 w-9 flex items-center justify-center rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-gray-300"
           >
             <ChevronLeft className="w-6 h-6" strokeWidth={2.1} />
           </button>
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold">
             Escolha sua forma de pagamento
           </h1>
         </div>
@@ -43,7 +43,7 @@ export default function Page() {
             <Skeleton className="max-w-[380px] w-full h-[500px] rounded-xl" />
           </div>
         ) : (
-          <div className="flex items-start gap-6">
+          <div className="flex flex-col lg:flex-row items-start gap-6 space-y-6 md:space-y-0">
             <PaymentMethodBox />
 
             <PropertyResume data={data!} />

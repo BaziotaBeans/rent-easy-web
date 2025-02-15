@@ -104,7 +104,7 @@ export function MultiStepFormPropertyRent() {
             fkCompany: user!.pkUser,
             fkPropertyType: appConstant.propertyTypeRent,
             images: uploadedURLS,
-            propertyStatus: "PUBLISHED",
+            propertyStatus: "STANDBY",
             schedules: convertWeekDays(updatedData.schedules),
             latitude: updatedData.latitude,
             longitude: updatedData.longitude,

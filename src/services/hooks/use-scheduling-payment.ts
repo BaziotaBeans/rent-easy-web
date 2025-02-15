@@ -16,6 +16,7 @@ export function useCreateSchedulingPayment() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["scheduling-payment"] });
       queryClient.invalidateQueries({ queryKey: ["scheduling-payments"] });
+      queryClient.invalidateQueries({ queryKey: ["scheduling-payments-company-user-associated"] });
       console.log(data);
     },
     onError: (error) => {
@@ -32,5 +33,15 @@ export function useSchedulingPayments() {
       return response;
     },
     // Only fetch if userId is provided.
+  });
+}
+
+export function useSchedulingPaymentsCompanyUserAssociated(companyId: string) {
+  return useQuery({
+    queryKey: ["scheduling-payments-company-user-associated"],
+    queryFn: async () => {
+      const response = await schedulingPaymentService.getCompanyUserAssociated(companyId);
+      return response;
+    },
   });
 }

@@ -78,8 +78,7 @@ export function CardProperty({ id, data }: CardPropertyProps) {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {/* <CarouselPrevious />
-      <CarouselNext /> */}
+
           </Carousel>
 
           <ImageGalleryCountCardProperty quantity={count} />
@@ -111,7 +110,7 @@ export function CardProperty({ id, data }: CardPropertyProps) {
               <span className="text-xs font-medium text-zinc-400">por mês</span>
             )}
           </span>
-          <span className="text-sm text-zinc-400 group-hover:text-white">
+          <span className="text-sm text-zinc-600 group-hover:text-white">
             {data?.property.address}
           </span>
 

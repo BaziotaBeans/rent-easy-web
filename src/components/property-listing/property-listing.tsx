@@ -43,7 +43,7 @@ export default function PropertyListing({ data }: PropertyListingProps) {
         onImageClick={handleImageClick}
       />
 
-      <div className="relative flex items-stretch gap-4 mt-6 transition-all">
+      <div className="relative flex flex-col lg:flex-row items-stretch gap-6 mt-6 transition-all">
         <div className="space-y-8 mt-6 w-full">
           <div className="space-y-4">
             <PriceBadge price={data?.property.price} type={data?.property?.propertyType}/>
@@ -107,7 +107,7 @@ export default function PropertyListing({ data }: PropertyListingProps) {
           </section>
         </div>
 
-        <div className="w-[415px] transition-all">
+        <div className="w-full lg:w-[415px] transition-all">
           <PropertyActions data={data}/>
         </div>
       </div>

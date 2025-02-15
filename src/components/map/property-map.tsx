@@ -1,7 +1,6 @@
 "use client";
 
-
-import { useEffect, useState, useRef, MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useState, MouseEvent as ReactMouseEvent } from "react";
 import { Minimize, Maximize } from "lucide-react";
 import {
   MapContainer,
@@ -15,11 +14,10 @@ import {
 import L, { LeafletMouseEvent } from "leaflet";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Home, Eye, EyeOff, Plus, Minus, Navigation } from "lucide-react";
+import { Plus, Minus, Navigation } from "lucide-react";
 import { PropertyCard } from "./property-card";
 import { Property, PropertyResponse } from "@/types/property";
 import { SAMPLE_PROPERTIES } from "@/data/sample-properties";
-import { SearchBox } from "./search-box";
 import { MapStyleSelector } from "./map-style-selector";
 import { MAP_STYLES } from "@/lib/map";
 
@@ -30,6 +28,7 @@ import { Separator } from "../ui/separator";
 import { useSearchMap } from "@/contexts/search-map-provider";
 import { cn } from "@/lib/utils";
 import { MapFullScreenType } from "@/types/mapFullScreenType";
+import { useFilter } from "@/contexts/filter-provider";
 
 const customIcon = new L.DivIcon({
   className: "custom-marker-icon",
@@ -82,17 +81,25 @@ function ZoomButtons() {
   const map = useMap();
 
   return (
-    <div className="absolute top-5 left-4 flex flex-col  bg-white z-[1000] rounded-md ring-2 ring-zinc-800/10 overflow-hidden">
+    <div
+      className="absolute top-5 left-4 flex flex-col  bg-white z-[1000] rounded-md ring-2 ring-zinc-800/10 overflow-hidden"
+      role="group"
+      aria-label="Zoom controls"
+    >
       <button
+        type="button"
         onClick={() => map.zoomIn()}
         className="text-zinc-800 w-8 h-8 flex items-center justify-center transition-all hover:bg-zinc-200"
+        aria-label="Zoom in"
       >
         <Plus strokeWidth={2.75} size={20} />
       </button>
       <Separator />
       <button
+        type="button"
         onClick={() => map.zoomOut()}
         className="text-zinc-800 w-8 h-8 flex items-center justify-center transition-all hover:bg-zinc-200"
+        aria-label="Zoom out"
       >
         <Minus strokeWidth={2.75} size={20} />
       </button>
@@ -105,6 +112,7 @@ function CurrentLocationButton({ onClick }: { onClick: () => void }) {
     <Button
       type="button"
       onClick={onClick}
+      aria-label="Minha Localização"
       className="group transition-all duration-300 absolute bottom-4 w-8 hover:w-44 left-4 z-[1000] px-2 bg-green-500 text-white hover:bg-green-600 shadow hover:flex overflow-hidden hover:items-center"
     >
       <Navigation size={18} />
@@ -116,18 +124,22 @@ function CurrentLocationButton({ onClick }: { onClick: () => void }) {
 }
 
 interface PropertyMapProps {
-  data: PropertyResponse[]
+  data: PropertyResponse[];
 }
 
-export type PopupClickHandler = (e: ReactMouseEvent<HTMLButtonElement> | LeafletMouseEvent) => void;
-function PropertyMap({ data }:PropertyMapProps) {
+export type PopupClickHandler = (
+  e: ReactMouseEvent<HTMLButtonElement> | LeafletMouseEvent
+) => void;
+function PropertyMap({ data }: PropertyMapProps) {
   const [mapStyle, setMapStyle] = useState("default");
   const [showMap, setShowMap] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { searchLocation, setSearchLocation } = useSearchMap();
   const [properties] = useState<Property[]>(SAMPLE_PROPERTIES);
   const { toast } = useToast();
+  const { searchQuery } = useFilter();
 
+  console.log(searchLocation);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -176,12 +188,33 @@ function PropertyMap({ data }:PropertyMapProps) {
     [-8.8375, 13.289], // Close the polygon
   ];
 
+  function VisibleMarkers({ data }: PropertyMapProps) {
+    const map = useMap();
+    const bounds = map.getBounds();
+
+    return (
+      <>
+        {data
+          .filter((item) =>
+            bounds.contains([item.property.latitude, item.property.longitude])
+          )
+          .map((item) => (
+            <Marker
+              key={item.property.pkProperty}
+              position={[item.property.latitude, item.property.longitude]}
+              icon={customIcon}
+            >
+              <Popup className="property-popup">
+                <PropertyCard data={item} />
+              </Popup>
+            </Marker>
+          ))}
+      </>
+    );
+  }
+
   return (
-    <div
-      className={cn("flex h-full", {
-        "fixed inset-0 z-[99999] w-full h-ull": isFullscreen,
-      })}
-    >
+    <div className="flex h-full">
       {/* Map */}
       <div className="relative flex-1">
         {showMap && (
@@ -213,7 +246,7 @@ function PropertyMap({ data }:PropertyMapProps) {
               /> */}
               <ZoomButtons />
               <CurrentLocationButton onClick={handleCurrentLocation} />
-              {searchLocation && (
+              {searchQuery && searchLocation && (
                 <Circle
                   center={searchLocation}
                   radius={2000}
@@ -227,15 +260,15 @@ function PropertyMap({ data }:PropertyMapProps) {
                 />
               )}
               {/* Polygon */}
-              <Polygon
+              {/* <Polygon
                 positions={polygonCoordinates}
                 pathOptions={{
                   color: "#6A4CFF",
                   dashArray: "5, 10",
                   fillOpacity: 0.2,
                 }}
-              />
-              ≤
+              /> */}
+
               {data.map((item) => (
                 <Marker
                   key={item.property.pkProperty}
@@ -243,10 +276,11 @@ function PropertyMap({ data }:PropertyMapProps) {
                   icon={customIcon}
                 >
                   <Popup className="property-popup">
-                    <PropertyCard data={item}/>
+                    <PropertyCard data={item} />
                   </Popup>
                 </Marker>
               ))}
+              {/* <VisibleMarkers data={data} /> */}
             </MapContainer>
 
             <MapStyleSelector value={mapStyle} onValueChange={setMapStyle} />

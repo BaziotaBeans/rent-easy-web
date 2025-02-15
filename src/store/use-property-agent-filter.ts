@@ -6,9 +6,11 @@ type SortOrder = "recent" | "asc" | "desc";
 interface FilterState {
   searchTerm: string;
   propertyTypes: string[];
+  propertySoldOrRented: string[];
   sortOrder: SortOrder;
   setSearchTerm: (term: string) => void;
   togglePropertyType: (type: string) => void;
+  togglePropertySoldOrRented: (type: string) => void;
   setSortOrder: (order: SortOrder) => void;
   resetFilters: () => void;
 }
@@ -16,6 +18,7 @@ interface FilterState {
 export const usePropertyFilter = create<FilterState>((set, get) => ({
   searchTerm: "",
   propertyTypes: [],
+  propertySoldOrRented: [],
   sortOrder: "recent",
 
   setSearchTerm: (term) => set({ searchTerm: term }),
@@ -26,6 +29,14 @@ export const usePropertyFilter = create<FilterState>((set, get) => ({
       ? propertyTypes.filter((t) => t !== type)
       : [...propertyTypes, type];
     set({ propertyTypes: updatedTypes });
+  },
+
+  togglePropertySoldOrRented: (type) => {
+    const { propertySoldOrRented } = get();
+    const updatedSoldOrRented = propertySoldOrRented.includes(type)
+    ? propertySoldOrRented.filter((t) => t !== type)
+    : [...propertySoldOrRented, type];
+    set({ propertySoldOrRented: updatedSoldOrRented });
   },
 
   setSortOrder: (order) => set({ sortOrder: order }),
