@@ -1,6 +1,7 @@
 "use client";
 
 import { z } from "zod";
+import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { useForm, FormProvider } from "react-hook-form";
@@ -99,9 +100,19 @@ export function MultiStepForm() {
         }
       } catch (error) {
         console.error("An error occurred:", error);
-        toast.error("Erro", {
-          description: "Ocorreu um erro ao criar a conta.",
-        });
+
+        if (error instanceof AxiosError && error.response?.data) {
+          const errorMessage =
+            error.response.data?.message || "Erro desconhecido.";
+
+          toast.error("Erro", {
+            description: errorMessage,
+          });
+        } else {
+          toast.error("Erro", {
+            description: "Ocorreu um erro inesperado ao criar a conta.",
+          });
+        }
       }
     }
   };

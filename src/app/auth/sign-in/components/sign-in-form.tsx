@@ -1,6 +1,6 @@
 "use client";
 
-import { FcGoogle } from "react-icons/fc";
+
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -54,15 +54,17 @@ export function SignInForm() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <Image
-          src="/RentEasy.png"
-          alt="logo"
-          className="object-cover max-w-[118px] w-full"
-          width={130}
-          height={36}
-        />
+    <div className="flex flex-col gap-4 w-full lg:max-w-full max-w-lg mx-auto lg:mx-0">
+      <div className="flex sm:flex-row flex-col items-center justify-between gap-2 sm:gap-0">
+        <Link href="/">
+          <Image
+            src="/RentEasy.png"
+            alt="logo"
+            className="object-cover max-w-[118px] w-full"
+            width={130}
+            height={36}
+          />
+        </Link>
 
         <span className="text-sm">
           Ainda não tem uma conta?{" "}
@@ -75,7 +77,7 @@ export function SignInForm() {
         </span>
       </div>
 
-      <h1 className="text-2xl text-black font-semibold">
+      <h1 className="text-2xl text-black font-semibold sm:text-left text-center">
         Faça login, acesse sua conta para encontrar o imóvel perfeito
       </h1>
 
@@ -134,12 +136,12 @@ export function SignInForm() {
               )}
             />
 
-            <Link
+            {/* <Link
               href="/forgot-password"
               className="text-sm font-medium text-blue-600 hover:underline"
             >
               Esqueceu sua senha?
-            </Link>
+            </Link> */}
           </div>
 
           <Button

@@ -120,7 +120,7 @@ export const stepAddPropertySaleSchemas = [
           Array.from(files || []).every((file) =>
             ACCEPTED_IMAGE_TYPES.includes(file.type)
           ),
-        "Somente arquivos de imagem são aceitos (JPEG, PNG, GIF)"
+        "Somente arquivos de imagem são aceitos (JPEG, PNG, WEBP)"
       ),
   }),
 ];

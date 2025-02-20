@@ -35,8 +35,8 @@ export function FilterProperty({ data }: FilterPropertyProps) {
   const { publishedCount, rentedCount, soldCount } = countProperties(data);
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0">
+      <div className="flex items-center flex-wrap gap-4">
         <span className="text-sm text-zinc-600 font-medium flex items-center gap-2">
           Activo
           <span className="text-zinc-500 text-xs font-medium bg-zinc-100 rounded-sm px-1">

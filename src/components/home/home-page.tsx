@@ -62,7 +62,7 @@ function HomeContent() {
         >
           <div className="flex flex-col p-4">
             <h1 className="text-2xl text-black font-semibold w-full mb-1.5">
-              Listagens de aluguel
+              Listagens dos imóveis
             </h1>
             <span className="font-medium text-gray-500">
               {filteredProperties.length} resultado

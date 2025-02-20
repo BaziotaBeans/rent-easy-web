@@ -1,6 +1,14 @@
 "use client";
 
-import { Pencil, Trash2, Eye, Ratio, BedDouble, Bath, CarFront } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Eye,
+  Ratio,
+  BedDouble,
+  Bath,
+  CarFront,
+} from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { PropertyDetailSheet } from "./property-detail/property-detail-sheet";
@@ -8,8 +16,7 @@ import { useState } from "react";
 import { PropertyDeleteDialog } from "./property-delete-dialog";
 import { PropertyResponse } from "@/types/property";
 import { formatDateToLong } from "@/utils/date-formats";
-
-//PropertyResponse
+import { showPropertyStatusName, statusColors } from "@/utils";
 
 interface PropertyCardProps {
   data: PropertyResponse;
@@ -26,17 +33,17 @@ export function PropertyCard({ data }: PropertyCardProps) {
   return (
     <>
       <div className="flex flex-col bg-[#f6f8fa] rounded-xl">
-        <div className="flex items-stretch gap-6 p-2 shadow-none transition-all bg-white rounded-xl border">
+        <div className="flex flex-col sm:flex-row items-stretch gap-6 p-2 shadow-none transition-all bg-white rounded-xl border">
           <Image
             src={data.images[0].url}
             alt={data.property.title}
             width={100}
             height={100}
-            className="object-cover w-[120px] h-[120px] rounded-lg"
+            className="object-cover w-full sm:w-[120px] h-[120px] rounded-lg"
           />
-          <div className="flex flex-col flex-1 justify-between py-1">
+          <div className="flex flex-col flex-1 justify-between py-1 sm:gap-0 gap-4">
             <div className="flex flex-col">
-              <div className="flex items-center justify-between">
+              <div className="flex sm:flex-row flex-col items-center justify-between">
                 <h3 className="text-zinc-800 font-medium">
                   {data.property.title}
                 </h3>
@@ -46,6 +53,13 @@ export function PropertyCard({ data }: PropertyCardProps) {
                   </span>
                   <span className="bg-zinc-100 text-zinc-600 self-start text-xs py-1 px-2 rounded-md mt-2 font-medium">
                     {data.property.propertyType}
+                  </span>
+                  <span
+                    className={`self-start text-xs py-1 px-2 rounded-md mt-2 font-medium  ${
+                      statusColors[data.property.propertyStatus] || "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {showPropertyStatusName(data.property.propertyStatus)}
                   </span>
                 </div>
               </div>
@@ -102,12 +116,12 @@ export function PropertyCard({ data }: PropertyCardProps) {
           </span>
 
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant={"ghost"}
               className="flex items-center gap-2 text-sm px-2 font-normal text-zinc-600 hover:text-primary-base"
             >
               <Pencil className="w-4 h-4 " /> Editar
-            </Button>
+            </Button> */}
 
             <PropertyDetailSheet data={data}>
               <Button

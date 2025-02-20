@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { usePayments } from "@/services/hooks/use-payment";
 import { useProperties } from "@/services/hooks/use-property";
 import { useSchedulings } from "@/services/hooks/use-scheduling";
@@ -7,16 +8,17 @@ import { useUsers } from "@/services/hooks/use-users";
 import { PaymentResponse } from "@/types/payment";
 import { formatPriceToKwanza } from "@/utils/format-price";
 import { Users, Home, CreditCard, Calendar } from "lucide-react";
-import { useMemo } from "react";
 import { StatsGrid } from "./components/stats-grid";
 import { ComparativeChart } from "./components/comparative-chart";
 import { generateChartData } from "./utils/chart-data";
-import { PropertyResponse } from "@/types/property";
 import { PropertyAllResponse } from "@/types/property-all";
 import CountyRentedChart from "./components/county-rented-chart";
 import PropertyTypeRadarChart from "./components/property-type-radar-chart";
 
 export default function AdminDashboard() {
+  const [selectedMostRentOrSold, setSelectedMostRentOrSold] = useState<
+    "Rent" | "Sold"
+  >("Rent");
   const {
     data: dataUsers,
     isLoading: isLoadingUsers,
@@ -90,15 +92,32 @@ export default function AdminDashboard() {
     );
   }, [dataProperties, dataPayments, dataSchedulings]);
 
-  console.log(dataProperties);
-
   const rentedPropertiesByCounty = useMemo(() => {
     if (!dataProperties) return [];
 
+    let rentedProperties;
+
+    if (selectedMostRentOrSold == "Rent") {
+      rentedProperties = dataProperties.filter(
+        (property: PropertyAllResponse) =>
+          property.propertyStatus === "RENTED" &&
+          property.fkPropertyTypeEntity.designation === "Arrendamento"
+      );
+    } else {
+      rentedProperties = dataProperties.filter(
+        (property: PropertyAllResponse) =>
+          (property.propertyStatus === "RENTED" &&
+            (property.fkPropertyTypeEntity.designation === "Venda") ||
+          property.fkPropertyTypeEntity.designation === "Terreno")
+      );
+    }
+
     // Filtrar imóveis alugados
-    const rentedProperties = dataProperties.filter(
-      (property: PropertyAllResponse) => property.propertyStatus === "RENTED"
-    );
+    // const rentedProperties = dataProperties.filter(
+    //   (property: PropertyAllResponse) =>
+    //     property.propertyStatus === "RENTED" &&
+    //     property.fkPropertyTypeEntity.designation === "Arrendamento"
+    // );
 
     // Agrupar por município e contar
     const countyCounts = rentedProperties.reduce(
@@ -115,7 +134,7 @@ export default function AdminDashboard() {
       county,
       count,
     }));
-  }, [dataProperties]);
+  }, [dataProperties, selectedMostRentOrSold]);
 
   const propertyTypeData = useMemo(() => {
     if (!dataProperties) return [];
@@ -153,7 +172,11 @@ export default function AdminDashboard() {
         <PropertyTypeRadarChart data={propertyTypeData} />
       </div>
 
-      <CountyRentedChart data={rentedPropertiesByCounty} />
+      <CountyRentedChart
+        data={rentedPropertiesByCounty}
+        selectedMostRentOrSold={selectedMostRentOrSold}
+        setSelectedMostRentOrSold={setSelectedMostRentOrSold}
+      />
     </div>
   );
 }

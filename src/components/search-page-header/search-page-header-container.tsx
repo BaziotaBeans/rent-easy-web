@@ -9,6 +9,7 @@ import { ButtonFilterType } from "./button-filter-type";
 import { SearchBarFilter } from "./search-bar-filter";
 import { useFilter } from "@/contexts/filter-provider";
 import { SlidersHorizontal, X } from "lucide-react";
+import { ButtonFilterByTitle } from "./button-filter-by-title";
 
 export function SearchPageHeaderContainer() {
   const { resetFilters } = useFilter();
@@ -31,6 +32,7 @@ export function SearchPageHeaderContainer() {
 
         {/* Filtros - Visíveis apenas em telas médias (`md`) ou quando abertos no mobile */}
         <div className="hidden md:flex items-center gap-3">
+          <ButtonFilterByTitle />
           <ButtonFilterPurpose />
           <ButtonFilterPrice />
           <ButtonFilterBedsBaths />
@@ -44,15 +46,20 @@ export function SearchPageHeaderContainer() {
       {/* Filtros no mobile - Expandem quando o estado `isFiltersOpen` é verdadeiro */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isFiltersOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
+          isFiltersOpen ? "max-h-[350px] opacity-100" : "max-h-0 opacity-0"
         } md:hidden`}
       >
         <div className="flex flex-col gap-3 px-6 py-4">
+          <ButtonFilterByTitle />
           <ButtonFilterPurpose />
           <ButtonFilterPrice />
           <ButtonFilterBedsBaths />
           <ButtonFilterType />
-          <Button className="h-10 w-full" variant="primary" onClick={resetFilters}>
+          <Button
+            className="h-10 w-full"
+            variant="primary"
+            onClick={resetFilters}
+          >
             Redefinir filtros
           </Button>
         </div>

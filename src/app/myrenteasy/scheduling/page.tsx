@@ -5,6 +5,7 @@ import { SchedulingCard } from "./components/scheduling-card";
 import { useSchedulingByUser } from "@/services/hooks/use-scheduling";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
+import { EmptyState } from "@/app/agent/components/EmptyState";
 
 export default function Page() {
   const { user } = useAuth();
@@ -45,9 +46,10 @@ export default function Page() {
 
       {/* Mensagem de Lista Vazia */}
       {!isLoading && !isError && schedulingData?.length === 0 && (
-        <div className="text-zinc-500 text-center font-medium">
-          Nenhum agendamento encontrado.
-        </div>
+        <EmptyState title="Sem agendamentos" description="Agende uma visita para ver os seus agendamentos."/>
+        // <div className="text-zinc-500 text-center font-medium">
+        //   Nenhum agendamento encontrado.
+        // </div>
       )}
 
       {/* Lista de Agendamentos */}
@@ -56,4 +58,5 @@ export default function Page() {
       ))}
     </main>
   );
+
 }

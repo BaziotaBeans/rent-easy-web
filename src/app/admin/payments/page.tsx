@@ -12,7 +12,6 @@ export default function PaymentsPage() {
 
   const dataPayments = data || [];
 
-  console.log(dataPayments);
 
   return (
     <>

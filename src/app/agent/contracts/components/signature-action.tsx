@@ -34,7 +34,7 @@ export function SignatureAction({
         >
           Assinar Agora
         </Button>
-        <Button variant={"destructive"}>Cancelar Assinatura</Button>
+        {/* <Button variant={"destructive"}>Cancelar Assinatura</Button> */}
       </div>
     </div>
   );

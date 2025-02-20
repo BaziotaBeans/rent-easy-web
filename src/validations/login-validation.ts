@@ -8,6 +8,8 @@ export const LoginFormSchemaValidation = z.object({
   password: z
     .string({
       required_error: "Senha obrigatório.",
+    }).min(1, {
+      message: "Senha obrigatório.",
     }),
     // Use the "describe" method to set the label
     // If no label is set, the field name will be used

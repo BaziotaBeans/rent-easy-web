@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const MAX_FILE_LENGTH_ALLOWED = 6;
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 export const scheduleSchema = z.object({
   dayOfWeek: z.string().min(1, { message: "Campo obrigatório." }),
@@ -133,7 +133,7 @@ export const stepAddPropertySchemas = [
           Array.from(files || []).every((file) =>
             ACCEPTED_IMAGE_TYPES.includes(file.type)
           ),
-        "Somente arquivos de imagem são aceitos (JPEG, PNG, GIF)"
+        "Somente arquivos de imagem são aceitos (JPEG, PNG, WEBP)"
       ),
   }),
 ];

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Carousel,
@@ -33,10 +34,7 @@ export function CardProperty({ id, data }: CardPropertyProps) {
   const { onOpen } = usePropertyDetailDialog();
 
   useEffect(() => {
-    if (!api) {
-      return;
-    }
-
+    if (!api) return;
     setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap());
 
@@ -47,89 +45,88 @@ export function CardProperty({ id, data }: CardPropertyProps) {
 
   return (
     <>
-      <Card
-        onClick={() => onOpen(id)}
-        className="bg-white shadow-none border-none p-4 flex flex-col gap-2 cursor-pointer transition-all hover:shadow-md"
+      <motion.div
+        initial={{ opacity: 0 }} // Começa invisível
+        animate={{ opacity: 1 }} // Fica visível suavemente
+        transition={{ duration: 0.5, ease: "easeOut" }} // Transição de 0.5s
       >
-        <CardHeader className="p-0 relative h-32 w-full">
-          <TagCardProperty
-            type={data.property.fkPropertyTypeEntity.designation}
-          />
-          <Carousel setApi={setApi} opts={{}}>
-            <CarouselContent>
-              {data.images.map((image, index) => (
-                <CarouselItem key={`${index}-${image.url}`}>
-                  <div className="relative w-full h-32 rounded-sm overflow-hidden">
-                    <Image
-                      src={image.url}
-                      alt=""
-                      className="object-cover w-full h-32 rounded-sm select-none"
-                      width={244}
-                      height={100}
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgAB/1h8JAAAAABJRU5ErkJggg=="
-                      onLoad={() => setIsImageLoaded(true)} // Atualiza o estado quando a imagem carrega
-                    />
-                    {/* Efeito de shimmer enquanto a imagem carrega */}
-                    {!isImageLoaded && (
-                      <div className="absolute inset-0 shimmer"></div>
-                    )}
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+        <Card
+          onClick={() => onOpen(id)}
+          className="bg-white shadow-none border-none p-4 flex flex-col gap-2 cursor-pointer transition-all hover:shadow-lg duration-300"
+        >
+          <CardHeader className="p-0 relative h-32 w-full overflow-hidden">
+            <TagCardProperty type={data.property.fkPropertyTypeEntity.designation} />
 
-          </Carousel>
+            <Carousel setApi={setApi} opts={{}}>
+              <CarouselContent>
+                {data.images.map((image, index) => (
+                  <CarouselItem key={`${index}-${image.url}`}>
+                    <div className="relative w-full h-32 rounded-sm overflow-hidden">
+                      <Image
+                        src={image.url}
+                        alt=""
+                        className="object-cover w-full h-32 rounded-sm select-none transition-opacity duration-500"
+                        width={244}
+                        height={100}
+                        placeholder="blur"
+                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAgAB/1h8JAAAAABJRU5ErkJggg=="
+                        onLoad={() => setIsImageLoaded(true)}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
 
-          <ImageGalleryCountCardProperty quantity={count} />
+            <ImageGalleryCountCardProperty quantity={count} />
 
-          {/* Dots */}
-          {count > 1 && (
-            <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
-              {Array.from({ length: count }).map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-2 h-2 rounded-full ${
-                    current === index ? "bg-white" : "bg-white/70"
-                  }`}
-                ></div>
-              ))}
-            </div>
-          )}
-        </CardHeader>
-        <CardContent className="flex flex-col items-start justify-start gap-1 py-2 px-0">
-          <h1 className="text-zinc-500 font-medium truncate w-[200px] transition-all group-hover:text-white">
-            {data.property.title}
-          </h1>
-          <span className="flex items-end gap-2">
-            <h1 className="text-primary-base font-bold group-hover:text-tertiary">
-              {formatPriceToKwanza(data.property.price)}
-            </h1>
-            {data.property.fkPropertyTypeEntity.designation ==
-              "Arrendamento" && (
-              <span className="text-xs font-medium text-zinc-400">por mês</span>
+            {count > 1 && (
+              <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
+                {Array.from({ length: count }).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full ${
+                      current === index ? "bg-white" : "bg-white/70"
+                    }`}
+                  ></div>
+                ))}
+              </div>
             )}
-          </span>
-          <span className="text-sm text-zinc-600 group-hover:text-white">
-            {data?.property.address}
-          </span>
+          </CardHeader>
 
-          <div className="flex items-center gap-2 mt-2">
-            <span className="flex items-center gap-1 text-xs group-hover:text-white">
-              <BedIcon size={15} />
-              {data.property.room} Quartos
+          <CardContent className="flex flex-col items-start justify-start gap-1 py-2 px-0">
+            <h1 className="text-zinc-500 font-medium truncate w-[200px]">
+              {data.property.title}
+            </h1>
+            <span className="flex items-end gap-2">
+              <h1 className="text-primary-base font-bold">
+                {formatPriceToKwanza(data.property.price)}
+              </h1>
+              {data.property.fkPropertyTypeEntity.designation === "Arrendamento" && (
+                <span className="text-xs font-medium text-zinc-400">por mês</span>
+              )}
             </span>
-            <span className="flex items-center gap-1 text-xs group-hover:text-white">
-              <BathTub size={15} />
-              {data.property.bathroom} banheiros
+            <span className="text-sm text-zinc-600">
+              {data?.property.address}
             </span>
-            <span className="flex items-center gap-1 text-xs group-hover:text-white">
-              <CardIcon size={15} />
-              {data.property.vacancy} Vagas
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+
+            <div className="flex items-center gap-2 mt-2">
+              <span className="flex items-center gap-1 text-xs">
+                <BedIcon size={15} />
+                {data.property.room} Quartos
+              </span>
+              <span className="flex items-center gap-1 text-xs">
+                <BathTub size={15} />
+                {data.property.bathroom} banheiros
+              </span>
+              <span className="flex items-center gap-1 text-xs">
+                <CardIcon size={15} />
+                {data.property.vacancy} Vagas
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       <PropertyDetailDialog id={id} data={data} />
     </>

@@ -53,11 +53,12 @@ import { useAuth } from "@/hooks/use-auth";
 
 export function PaymentsDataTable() {
   const { user } = useAuth();
-  const { data } = usePaymentsCompanyUserAssociated(user?.pkUser ?? "");
+  const { data: dataPayments } = usePaymentsCompanyUserAssociated(user?.pkUser ?? "");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const data = Array.isArray(dataPayments) ? dataPayments: [];
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [selectedPayment, setSelectedPayment] =
     React.useState<PaymentResponse | null>(null);
@@ -179,7 +180,7 @@ export function PaymentsDataTable() {
   ];
 
   const filteredData = React.useMemo(() => {
-    return data.filter((payment) => {
+    return data?.filter((payment) => {
       const matchesDate = selectedDate
         ? format(new Date(payment.createdAt), "yyyy-MM-dd") ===
           format(selectedDate, "yyyy-MM-dd")

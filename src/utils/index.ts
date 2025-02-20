@@ -150,3 +150,25 @@ export const statusColors: Record<string, string> = {
 export function normalizeStatus(status: string): string {
   return status.toUpperCase().trim(); // Transforma em maiúsculas e remove espaços extras
 }
+
+export function getOffsetCoordinate(lat: number, lng: number, index: number) {
+  const offset = 0.0001; // Pequeno deslocamento
+  const angle = (index * 360) / 10; // Distribuir ao redor do ponto central
+  const radian = (angle * Math.PI) / 180;
+  return [
+    lat + Math.sin(radian) * offset,
+    lng + Math.cos(radian) * offset,
+  ];
+}
+
+export const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371; // Raio da Terra em km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distância em km
+};

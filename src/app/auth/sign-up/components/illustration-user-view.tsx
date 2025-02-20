@@ -18,7 +18,7 @@ const rentTextList = [
 
 export function IllustrationViewUserNormal() {
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden relative">
+    <div className="hidden lg:block w-full h-full rounded-2xl overflow-hidden relative">
       <div className="bg-[#FECB2C] flex items-center justify-center">
         <Image
           src="/illustration-1.svg"

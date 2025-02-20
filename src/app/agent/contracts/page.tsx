@@ -2,7 +2,6 @@
 
 import { useContractByCompany } from "@/services/hooks/use-contracts";
 import { ContractCard } from "./components/contract-card";
-import { FilterProperty } from "./components/filter-property";
 import { useAuth } from "@/hooks/use-auth";
 import { SkeletonContracts } from "../components/skeleton/contracts";
 
@@ -32,8 +31,6 @@ export default function Page() {
           Ocorreu um erro ao carregar os contractos. Tente novamente mais tarde.
         </div>
       )}
-
-      {/* <FilterProperty /> */}
 
       {!isLoading && !isError && contractsData?.length === 0 && (
         <div className="text-zinc-500 text-center font-medium">

@@ -156,12 +156,12 @@ export function SignInWithoutRedirectDialog({
                   )}
                 />
 
-                <Link
+                {/* <Link
                   href="/forgot-password"
                   className="text-sm font-medium text-blue-600 hover:underline"
                 >
                   Esqueceu sua senha?
-                </Link>
+                </Link> */}
               </div>
 
               <Button

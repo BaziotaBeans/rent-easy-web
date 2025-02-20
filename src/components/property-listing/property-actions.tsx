@@ -29,6 +29,8 @@ export function PropertyActions({ data }: PropertyActionsProps) {
     setSignInWithoutRedirectDialogMessage,
   ] = useState<string>("");
 
+  const isPropertyRent = data.property.fkPropertyTypeEntity.designation == "Arrendamento";
+
   const { onOpen } = useSignInWithoutRedirectDialogDialog();
 
   const { onClose } = usePropertyDetailDialog();
@@ -85,7 +87,7 @@ export function PropertyActions({ data }: PropertyActionsProps) {
           size={"lg"}
           onClick={handleGoToPayment}
         >
-          Arrendar agora
+          {isPropertyRent ? 'Arrendar agora' : 'Comprar agora'}
         </Button>
 
         <Button

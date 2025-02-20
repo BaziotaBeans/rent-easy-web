@@ -37,13 +37,15 @@ export function SelectUserType() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Image
-          src="/RentEasy.png"
-          alt="logo"
-          className="object-cover max-w-[118px] w-full"
-          width={130}
-          height={36}
-        />
+        <Link href="/">
+          <Image
+            src="/RentEasy.png"
+            alt="logo"
+            className="object-cover max-w-[118px] w-full"
+            width={130}
+            height={36}
+          />
+        </Link>
 
         <span className="text-sm">
           Já possui uma conta?{" "}

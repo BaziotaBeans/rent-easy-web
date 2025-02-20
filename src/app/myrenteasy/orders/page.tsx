@@ -5,6 +5,7 @@ import { OrderCard } from "./components/order-card";
 import { useOrderByUser } from "@/services/hooks/use-order";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/app/agent/components/EmptyState";
 
 export default function Page() {
   const { user } = useAuth();
@@ -13,9 +14,9 @@ export default function Page() {
 
   if (!data || data?.length === 0) {
     return (
-      <main className="flex flex-col py-10 gap-6 items-center justify-center">
-        <h1 className="text-3xl text-zinc-600 font-bold mt-16">Pedidos</h1>
-        <p className="text-lg text-zinc-500">Nenhum pedido encontrado.</p>
+      <main className="flex flex-col py-10 gap-6">
+        <h1 className="text-3xl text-zinc-600 font-bold">Pedidos</h1>
+        <EmptyState title="Sem pedidos" description="Nenhum pedido encontrado."/>
       </main>
     );
   }

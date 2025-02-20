@@ -16,7 +16,7 @@ export const MAX_FILE_LENGTH_ALLOWED = 6;
 
 export const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif"];
+export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 export const VISIT_FEE = 3000;
 

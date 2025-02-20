@@ -12,24 +12,30 @@ import { usePropertiesByCompanyId } from "@/services/hooks/use-property";
 import { useAddPropertyDialogDialog } from "@/store/use-add-property-dialog";
 import { SkeletonHome } from "./components/skeleton/home";
 import { ErrorHandler } from "./components/state-handler/error-handler";
-import { EmptyHandler } from "./components/state-handler/empty-handler";
 import { usePropertyFilter } from "@/store/use-property-agent-filter";
 import { filterAndSortProperties } from "@/utils/filter-agent-properties";
+import { EmptyState } from "./components/EmptyState";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
 
   const { user } = useAuth();
 
-  const { data, isLoading, isError, refetch } = usePropertiesByCompanyId(
-    user?.pkUser!
-  );
+  const {
+    data: dataPropertiesByCompanyId,
+    isLoading,
+    isError,
+    refetch,
+  } = usePropertiesByCompanyId(user?.pkUser!);
 
-  const { searchTerm, propertyTypes, sortOrder, propertySoldOrRented } = usePropertyFilter();
+  const data = Array.isArray(dataPropertiesByCompanyId)
+    ? dataPropertiesByCompanyId
+    : [];
+
+  const { searchTerm, propertyTypes, sortOrder, propertySoldOrRented } =
+    usePropertyFilter();
 
   const { onOpen } = useAddPropertyDialogDialog();
-
-  const isEmpty = !data || data.length === 0;
 
   useEffect(() => {
     setIsClient(true);
@@ -39,9 +45,13 @@ export default function Page() {
 
   if (isError) return <ErrorHandler onRetry={refetch} />;
 
-  if (isEmpty) return <EmptyHandler onRetry={refetch} />;
-
-  const filteredData = filterAndSortProperties(data, searchTerm, propertyTypes, propertySoldOrRented, sortOrder);
+  const filteredData = filterAndSortProperties(
+    data,
+    searchTerm,
+    propertyTypes,
+    propertySoldOrRented,
+    sortOrder
+  );
 
   return (
     <>
@@ -60,13 +70,17 @@ export default function Page() {
 
         <SearchProperty />
 
-        <FilterProperty data={data}/>
+        <FilterProperty data={data} />
 
-        <div className="flex flex-col gap-3">
-          {filteredData.map((item) => (
-            <PropertyCard key={item.property.pkProperty} data={item} />
-          ))}
-        </div>
+        {filteredData.length ? (
+          <div className="flex flex-col gap-3">
+            {filteredData.map((item) => (
+              <PropertyCard key={item.property.pkProperty} data={item} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="Sem Imóveis" description="Por favor adicione seus imóveis..."/>
+        )}
       </main>
 
       <AddPropertyDialog />

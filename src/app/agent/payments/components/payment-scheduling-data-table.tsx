@@ -162,7 +162,9 @@ export function PaymentSchedulingDataTable() {
     return <div>Carregando...</div>;
   }
 
-  const { data } = useSchedulingPaymentsCompanyUserAssociated(user.pkUser);
+  const { data: dataPaymentScheduling } = useSchedulingPaymentsCompanyUserAssociated(user.pkUser);
+
+  const data = Array.isArray(dataPaymentScheduling) ? dataPaymentScheduling: [];
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
 

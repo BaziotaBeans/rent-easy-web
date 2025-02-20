@@ -55,6 +55,7 @@ export function SelectPropertyType() {
         className="mt-auto font-semibold"
         size={"lg"}
         onClick={handleSelectStep}
+        disabled={!selectedPropertyPurpose || !selectedPropertyType}
       >
         Próximo
       </Button>

@@ -7,6 +7,8 @@ import { MAX_FILTER_PRICE } from "@/utils/constant";
 interface FilterContextType {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  titleQuery: string;
+  setTitleQuery: (query: string) => void;
   priceRange: { min: number; max: number };
   setPriceRange: (range: { min: number; max: number }) => void;
   selectedTypes: string[];
@@ -25,6 +27,7 @@ const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export function FilterProvider({ children }: { children: ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [titleQuery, setTitleQuery] = useState("");
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({
     min: 0,
     max: MAX_FILTER_PRICE,
@@ -36,6 +39,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
 
   const resetFilters = () => {
     setSearchQuery("");
+    setTitleQuery("");
 
     setPriceRange({
       min: 0,
@@ -61,6 +65,13 @@ export function FilterProvider({ children }: { children: ReactNode }) {
           property.property.address,
           property.property.county,
         ].some((field) => field.toLowerCase().includes(searchTerms))
+      );
+    }
+
+    if (titleQuery) {
+      const titleSearch = titleQuery.toLowerCase();
+      filteredProperties = filteredProperties.filter((property) =>
+        property.property.title.toLowerCase().includes(titleSearch)
       );
     }
 
@@ -124,6 +135,8 @@ export function FilterProvider({ children }: { children: ReactNode }) {
   const contextValue = useMemo(() => ({
     searchQuery,
     setSearchQuery,
+    titleQuery,
+    setTitleQuery,
     priceRange,
     setPriceRange,
     selectedTypes,
@@ -138,6 +151,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     resetFilters,
   }), [
     searchQuery,
+    titleQuery,
     priceRange,
     selectedTypes,
     purpose,
