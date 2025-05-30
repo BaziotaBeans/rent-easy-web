@@ -29,8 +29,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     absolute: "", // if the template is set ignore all
-    default: "Home | Renteasy",
-    template: "%s | Renteasy",
+    default: "Home | Renda Fácil",
+    template: "%s | Renda Fácil",
   },
   description: "Plataforma de aluguel de imóvel",
 };

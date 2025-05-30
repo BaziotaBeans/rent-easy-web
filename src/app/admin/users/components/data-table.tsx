@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { AlertCircle, ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -43,6 +43,8 @@ import {
 } from "@/components/ui/sheet";
 import { useUsers } from "@/services/hooks/use-users";
 import { UserResponse } from "@/types/user";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 
 // 👤 Interface para os usuários
 interface Role {
@@ -65,7 +67,7 @@ export function UsersDataTable() {
     null
   ); // Estado para armazenar o usuário selecionado
 
-  const { data } = useUsers();
+  const { data, isLoading, isError } = useUsers();
 
   const dataUsers = data || [];
 
@@ -134,7 +136,7 @@ export function UsersDataTable() {
       cell: ({ row }) =>
         (row.getValue("roles") as Role[])
           .map((role) => {
-            if (role.name === "ROLE_COMPANY") return "Empresa";
+            if (role.name === "ROLE_COMPANY") return "Agente";
             if (role.name === "ROLE_USER") return "Usuário";
             if (role.name === "ROLE_ADMIN") return "Administrador";
             return role.name;
@@ -152,7 +154,7 @@ export function UsersDataTable() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Abrir menu</span>
-                <MoreHorizontal />
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -194,9 +196,34 @@ export function UsersDataTable() {
     state: { sorting, columnFilters, columnVisibility, rowSelection },
   });
 
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-1/4" />
+        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <span>Erro ao carregar os usuários. Tente novamente mais tarde.</span>
+      </Alert>
+    );
+  }
+
   return (
     <>
       <div className="w-full">
+        <div className=" flex flex-col">
+          <h2 className="text-2xl font-medium">Usuários</h2>
+          <p className="text-sm text-zinc-500">
+            Total de usuários cadastrados: {dataUsers.length}
+          </p>
+        </div>
         <div className="flex gap-4 my-4">
           <Input
             placeholder="Filtrar por nome..."
@@ -299,11 +326,17 @@ export function UsersDataTable() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
+                <span className="text-sm">Estado Civil:</span>{" "}
+                <span className="text-sm font-medium">
+                  {selectedUser.maritalStatus}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
                 <span className="text-sm">Papéis:</span>{" "}
                 <span className="text-sm font-medium">
                   {selectedUser.roles
                     .map((role) => {
-                      if (role.name === "ROLE_COMPANY") return "Empresa";
+                      if (role.name === "ROLE_COMPANY") return "Agente";
                       if (role.name === "ROLE_USER") return "Usuário";
                       if (role.name === "ROLE_ADMIN") return "Administrador";
                       return role.name;

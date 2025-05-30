@@ -13,9 +13,10 @@ export function Footer() {
             <div className="flex flex-col gap-2 items-center lg:items-start text-white">
               <Link href="/">
                 <Image
-                  src="/RentEasy-White.png"
+                  src="/logo-white.png"
+                  // src="/RentEasy-White.png"
                   alt="RentEasy Logo"
-                  className="object-cover w-28"
+                  className="object-cover"
                   width={130}
                   height={36}
                 />

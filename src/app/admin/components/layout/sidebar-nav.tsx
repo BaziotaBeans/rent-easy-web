@@ -9,12 +9,14 @@ import {
   Home, 
   CreditCard, 
   Calendar,
+  FileText
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Usuários', href: '/admin/users', icon: Users },
   { name: 'Imóveis', href: '/admin/properties', icon: Home },
+  { name: 'Contractos', href: '/admin/contracts', icon: FileText },
   { name: 'Pagamentos', href: '/admin/payments', icon: CreditCard },
   { name: 'Agendamentos', href: '/admin/schedules', icon: Calendar },
 ];

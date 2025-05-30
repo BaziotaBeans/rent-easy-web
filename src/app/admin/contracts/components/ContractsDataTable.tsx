@@ -34,12 +34,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ExportButton } from "./export-excel-button";
-import { SchedulingPaymentResponse } from "@/types/scheduling-payment";
-import { ExportPDFButton } from "./export-pdf-button";
-import { ExportJSONButton } from "./export-json-button";
+import { ContractResponse } from "@/types/contract";
+// import { ExportButton } from "./export-excel-button";
+// import { ExportPDFButton } from "./export-pdf-button";
+// import { ExportJSONButton } from "./export-json-button";
 
-export const columns: ColumnDef<SchedulingPaymentResponse>[] = [
+export const columns: ColumnDef<ContractResponse>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -62,6 +62,7 @@ export const columns: ColumnDef<SchedulingPaymentResponse>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  
   {
     id: "cliente",
     accessorFn: (row) => row.user.fullName,
@@ -75,86 +76,68 @@ export const columns: ColumnDef<SchedulingPaymentResponse>[] = [
     cell: ({ row }) => <div>{row.original.property.title}</div>,
   },
   {
-    id: "dataAgendamento",
-    accessorFn: (row) => row.scheduledDate,
-    header: "Data do Agendamento",
-    cell: ({ row }) => <div>{row.original.scheduledDate}</div>,
+    id: "agent",
+    accessorKey: "agent",
+    header: "Agente",
+    cell: ({ row }) => (
+      <div>{row.original.property.companyEntity.user.fullName}</div>
+    ),
   },
   {
-    id: "diaSemana",
-    accessorFn: (row) =>
-      row.scheduleDetails.match(/Dia da Semana: (\w+)/)?.[1] || "N/A",
-    header: "Dia da Semana",
-    cell: ({ row }) => {
-      const diasSemana: Record<string, string> = {
-        MONDAY: "Segunda-feira",
-        TUESDAY: "Terça-feira",
-        WEDNESDAY: "Quarta-feira",
-        THURSDAY: "Quinta-feira",
-        FRIDAY: "Sexta-feira",
-        SATURDAY: "Sábado",
-        SUNDAY: "Domingo",
-      };
-      const dia =
-        row.original.scheduleDetails.match(/Dia da Semana: (\w+)/)?.[1];
-      return <div>{diasSemana[dia || ""] || "N/A"}</div>;
-    },
+    id: "finalidade",
+    accessorKey: "finalidade",
+    header: "Finalidade",
+    cell: ({ row }) => (
+      <div>{row.original.property.fkPropertyTypeEntity.designation}</div>
+    ),
   },
   {
-    id: "horario",
-    accessorFn: (row) =>
-      row.scheduleDetails.match(/Horário: ([\d: -]+)/)?.[1] || "N/A",
-    header: "Horário",
+    id: "preco",
+    accessorFn: (row) => row.property.price,
+    header: "Preço",
+    cell: ({ row }) => (
+      <div>{row.original.property.price.toLocaleString("pt-AO")} AOA</div>
+    ),
+  },
+  {
+    id: "dataInicio",
+    accessorFn: (row) => row.startDate,
+    header: "Data de Início",
+    cell: ({ row }) => (
+      <div>{new Date(row.original.startDate).toLocaleDateString()}</div>
+    ),
+  },
+  {
+    id: "dataFim",
+    accessorFn: (row) => row.endDate,
+    header: "Data de Fim",
     cell: ({ row }) => (
       <div>
-        {row.original.scheduleDetails.match(/Horário: ([\d: -]+)/)?.[1] ||
-          "N/A"}
+        {row.original.endDate
+          ? new Date(row.original.endDate).toLocaleDateString()
+          : "Vitalício"}
       </div>
     ),
   },
   {
-    id: "valorPago",
-    accessorFn: (row) => row.totalValue,
-    header: "Valor Pago",
-    cell: ({ row }) => <div>{`R$ ${row.original.totalValue.toFixed(2)}`}</div>,
-  },
-  {
-    id: "actions",
-    enableHiding: false,
+    id: "status",
+    accessorFn: (row) => row.contractStatus,
+    header: "Status",
     cell: ({ row }) => {
-      const schedule = row.original;
-
+      const statusMap: Record<string, string> = {
+        PENDING: "Pendente",
+        ACTIVE: "Ativo",
+        CANCELED: "Cancelado",
+        COMPLETED: "Concluído",
+      };
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(schedule.pkSchedulingPayment)
-              }
-            >
-              Copiar ID do Pagamento
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div>{statusMap[row.original.contractStatus] || "Desconhecido"}</div>
       );
     },
   },
 ];
 
-export function ScheduleDataTable({
-  data,
-}: {
-  data: SchedulingPaymentResponse[];
-}) {
+export function ContractsDataTable({ data }: { data: ContractResponse[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -184,10 +167,10 @@ export function ScheduleDataTable({
 
   return (
     <div>
-      <div className=" flex flex-col">
-        <h2 className="text-2xl font-medium">Agendamentos</h2>
+      <div className="flex flex-col">
+        <h2 className="text-2xl font-medium">Contratos</h2>
         <p className="text-sm text-zinc-500">
-          Total de agendamentos realizados: {data.length}
+          Total de contratos: {data.length}
         </p>
       </div>
 
@@ -201,12 +184,13 @@ export function ScheduleDataTable({
           className="max-w-sm"
         />
 
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <ExportButton data={data} />
           <ExportPDFButton data={data} />
           <ExportJSONButton data={data} />
-        </div>
+        </div> */}
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -214,12 +198,10 @@ export function ScheduleDataTable({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -228,10 +210,7 @@ export function ScheduleDataTable({
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -244,34 +223,13 @@ export function ScheduleDataTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  Nenhum resultado encontrado.
+                <TableCell colSpan={columns.length} className="text-center">
+                  Nenhum contrato encontrado.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Anterior
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Próximo
-        </Button>
       </div>
     </div>
   );

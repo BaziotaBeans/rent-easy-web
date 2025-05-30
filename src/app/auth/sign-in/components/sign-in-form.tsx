@@ -48,7 +48,7 @@ export function SignInForm() {
       });
     } catch (error) {
       toast.error("Erro", {
-        description: "Ocorreu um erro ao realizar o login.",
+        description: "Ocorreu um erro ao realizar o login. Dados incorretos.",
       });
     }
   }
@@ -58,7 +58,8 @@ export function SignInForm() {
       <div className="flex sm:flex-row flex-col items-center justify-between gap-2 sm:gap-0">
         <Link href="/">
           <Image
-            src="/RentEasy.png"
+            // src="/RentEasy.png"
+            src="/logo-rf.png"
             alt="logo"
             className="object-cover max-w-[118px] w-full"
             width={130}

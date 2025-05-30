@@ -39,7 +39,8 @@ export function SelectUserType() {
       <div className="flex items-center justify-between">
         <Link href="/">
           <Image
-            src="/RentEasy.png"
+            // src="/RentEasy.png"
+            src="/logo-rf.png"
             alt="logo"
             className="object-cover max-w-[118px] w-full"
             width={130}

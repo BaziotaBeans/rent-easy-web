@@ -65,23 +65,38 @@ export function MultiStepForm() {
         const uploadedURL = await handleUpload(file);
 
         if (uploadedURL) {
-          await signUp({
-            username: updatedData?.username,
-            fullName: updatedData?.fullName,
-            email: updatedData?.email,
-            password: updatedData?.password,
-            phone: updatedData?.phoneNumber,
-            role: ["user"],
-            nif: updatedData?.nif,
-            address: updatedData?.address,
-            nationality: updatedData?.nationality,
-            maritalStatus: updatedData?.maritalStatus,
-            urlDocument: uploadedURL,
-          });
+          try {
+            await signUp({
+              username: updatedData?.username,
+              fullName: updatedData?.fullName,
+              email: updatedData?.email,
+              password: updatedData?.password,
+              phone: updatedData?.phoneNumber,
+              role: ["user"],
+              nif: updatedData?.nif,
+              address: updatedData?.address,
+              nationality: updatedData?.nationality,
+              maritalStatus: updatedData?.maritalStatus,
+              urlDocument: uploadedURL,
+            });
 
-          toast.success("Sucesso", {
-            description: "Conta criada com sucesso.",
-          });
+            toast.success("Sucesso", {
+              description: "Conta criada com sucesso.",
+            });
+          } catch (error) {
+            if (error instanceof AxiosError && error.response?.data) {
+              const errorMessage =
+                error.response.data?.message || "Erro desconhecido.";
+
+              toast.error("Erro", {
+                description: errorMessage,
+              });
+            } else {
+              toast.error("Erro", {
+                description: "Ocorreu um erro inesperado ao criar a conta.",
+              });
+            }
+          }
         } else {
           console.error("File upload failed.");
           toast.error("Erro", {

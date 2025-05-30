@@ -14,9 +14,10 @@ export default function TermsLayout({ children }: LayoutProps) {
         <MaxWidthWrapper className="flex justify-between items-center">
           <Link href="/">
             <Image
-              src="/RentEasy-White.png"
+              // src="/RentEasy-White.png"
+              src="/logo-white.png"
               alt=""
-              className="object-cover h-9 aspect-square"
+              className="object-cover"
               width={130}
               height={36}
             />
@@ -42,8 +43,7 @@ export default function TermsLayout({ children }: LayoutProps) {
       </main>
       <footer className="bg-zinc-100 py-4 mt-8">
         <div className="container mx-auto text-center text-zinc-600 text-sm">
-          © {new Date().getFullYear()} - Sistema de Aluguel. Todos os direitos
-          reservados.
+          © {new Date().getFullYear()} - Renda Fácil - Todos os direitos resvados.
         </div>
       </footer>
     </div>

@@ -8,9 +8,10 @@ export function Header() {
       <MaxWidthWrapper>
         <Link href="/">
           <Image
-            src="/RentEasy.png"
+            // src="/RentEasy.png"
+            src="/logo-rf.png"
             alt=""
-            className="object-cover h-9"
+            className="object-cover"
             width={130}
             height={36}
           />

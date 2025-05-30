@@ -2,8 +2,8 @@ import { api } from '@/lib/axios';
 import { Contract, ContractResponse, ContractSignatureRequest } from '@/types/contract';
 
 export const contractService = {
-  async getAll(): Promise<Contract[]> {
-    const response = await api.get<Contract[]>('/contracts');
+  async getAll(): Promise<ContractResponse[]> {
+    const response = await api.get<ContractResponse[]>('/contracts');
     return response.data;
   },
 

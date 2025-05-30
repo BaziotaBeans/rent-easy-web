@@ -29,14 +29,6 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { formatPriceToKwanza } from "@/utils/format-price";
 import { Input } from "@/components/ui/input";
 import {
@@ -63,6 +55,7 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
     undefined
   );
+  const [clientFilter, setClientFilter] = React.useState<string>("");
 
   // Função para abrir o Sheet com os detalhes do imóvel
   const handleViewDetails = (payment: PaymentResponse) => {
@@ -73,6 +66,7 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
   // Função para resetar os filtros
   const resetFilters = () => {
     setSelectedDate(undefined);
+    setClientFilter("");
   };
 
   const columns: ColumnDef<PaymentResponse>[] = [
@@ -104,6 +98,7 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0"
         >
           Data de Pagamento
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -135,7 +130,7 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
       cell: ({ row }) => <div>{row.getValue("paymentMethod")}</div>,
     },
     {
-      accessorKey: "user",
+      accessorKey: "clientName",
       header: "Cliente",
       cell: ({ row }) => <div>{row.original?.user?.fullName}</div>,
     },
@@ -151,36 +146,6 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
       header: "Referência",
       cell: ({ row }) => <div>{row.getValue("reference")}</div>,
     },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const payment = row.original;
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(payment.pkPayment)}
-              >
-                Copiar ID do Pagamento
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleViewDetails(payment)}>
-                Ver detalhes
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
   ];
 
   const filteredData = React.useMemo(() => {
@@ -190,9 +155,15 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
           format(selectedDate, "yyyy-MM-dd")
         : true;
 
-      return matchesDate;
+      const matchesClient = clientFilter
+        ? payment.user?.fullName
+            .toLowerCase()
+            .includes(clientFilter.toLowerCase())
+        : true;
+
+      return matchesDate && matchesClient;
     });
-  }, [data, selectedDate]);
+  }, [data, selectedDate, clientFilter]);
 
   const table = useReactTable({
     data: filteredData,
@@ -218,10 +189,8 @@ export function PaymentsDataTable({ data }: { data: PaymentResponse[] }) {
       <div className="flex items-center justify-between gap-4 py-4">
         <Input
           placeholder="Filtrar por cliente..."
-          value={(table.getColumn("user")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("user")?.setFilterValue(event.target.value)
-          }
+          value={clientFilter}
+          onChange={(event) => setClientFilter(event.target.value)}
           className="max-w-sm"
         />
 

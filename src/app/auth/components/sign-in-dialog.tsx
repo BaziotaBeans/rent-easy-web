@@ -66,7 +66,7 @@ export function SignInDialog() {
       setOpenSignInDialog(false);
     } catch (error) {
       toast.error("Erro", {
-        description: "Ocorreu um erro ao realizar o login.",
+        description: "Ocorreu um erro ao realizar o login. Dados incorretos.",
       });
     }
   }
@@ -82,7 +82,7 @@ export function SignInDialog() {
       <DialogPortal>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Bem vindo a RentEasy</DialogTitle>
+            <DialogTitle>Bem vindo a Renda Fácil</DialogTitle>
             <DialogDescription>
               Faça login com os dados que você inseriu durante seu registo.
             </DialogDescription>

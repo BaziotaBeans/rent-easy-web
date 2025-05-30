@@ -72,26 +72,41 @@ export function MultiStepForm() {
         const uploadedURL = await handleUpload(file);
 
         if (uploadedURL) {
-          signUpWithCompany({
-            username: updatedData?.username,
-            fullName: updatedData?.fullName,
-            email: updatedData?.email,
-            password: updatedData?.password,
-            phone: updatedData?.phoneNumber,
-            role: ["company"],
-            nif: updatedData?.nif,
-            address: updatedData?.address,
-            nationality: updatedData?.nationality,
-            maritalStatus: updatedData?.maritalStatus,
-            urlDocument: uploadedURL,
-            bankName: updatedData?.bankName,
-            bankAccountNumber: updatedData?.bankAccountNumber,
-            iban: updatedData?.bankIban,
-          });
+          try {
+            await signUpWithCompany({
+              username: updatedData?.username,
+              fullName: updatedData?.fullName,
+              email: updatedData?.email,
+              password: updatedData?.password,
+              phone: updatedData?.phoneNumber,
+              role: ["company"],
+              nif: updatedData?.nif,
+              address: updatedData?.address,
+              nationality: updatedData?.nationality,
+              maritalStatus: updatedData?.maritalStatus,
+              urlDocument: uploadedURL,
+              bankName: updatedData?.bankName,
+              bankAccountNumber: updatedData?.bankAccountNumber,
+              iban: updatedData?.bankIban,
+            });
 
-          toast.success("Sucesso", {
-            description: "Conta criada com sucesso.",
-          });
+            toast.success("Sucesso", {
+              description: "Conta criada com sucesso.",
+            });
+          } catch (error) {
+            if (error instanceof AxiosError && error.response?.data) {
+              const errorMessage =
+                error.response.data?.message || "Erro desconhecido.";
+
+              toast.error("Erro", {
+                description: errorMessage,
+              });
+            } else {
+              toast.error("Erro", {
+                description: "Ocorreu um erro inesperado ao criar a conta.",
+              });
+            }
+          }
         } else {
           console.error("File upload failed.");
           toast.error("Erro", {

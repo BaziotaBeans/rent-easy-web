@@ -20,11 +20,12 @@ export function Header() {
       <header className="w-full z-50 bg-white border-b border-b-zinc-200">
         <div className="flex items-center justify-between py-4 px-6 h-16">
           {/* Logo */}
-          <Link href="/" aria-label="Página inicial">
+          <Link href="/" aria-label="Página inicial" className="cursor-pointer">
             <Image
-              src="/RentEasy.png"
+              // src="/RentEasy.png"
+              src="/logo-rf.png"
               alt="RentEasy - Página Inicial"
-              className="object-cover h-9"
+              className="object-cover "
               width={130}
               height={36}
             />
@@ -56,7 +57,10 @@ export function Header() {
               <AccountPopover />
             ) : (
               <>
-                <Button variant="ghost" onClick={() => setOpenSignInDialog(true)}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setOpenSignInDialog(true)}
+                >
                   Entrar
                 </Button>
                 <Button asChild variant="primary">
@@ -74,7 +78,10 @@ export function Header() {
               <AccountPopover />
             ) : (
               <>
-                <Button variant="ghost" onClick={() => setOpenSignInDialog(true)}>
+                <Button
+                  variant="ghost"
+                  onClick={() => setOpenSignInDialog(true)}
+                >
                   Entrar
                 </Button>
                 <Button asChild variant="primary">

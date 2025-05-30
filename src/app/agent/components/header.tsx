@@ -12,9 +12,10 @@ export function Header() {
       <MaxWidthWrapper className="flex items-center justify-between">
         <Link href="/agent">
           <Image
-            src="/RentEasy-White.png"
+            // src="/RentEasy-White.png"
+            src="/logo-white.png"
             alt=""
-            className="object-cover h-9 aspect-square"
+            className="object-cover"
             width={130}
             height={36}
           />

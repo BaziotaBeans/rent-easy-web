@@ -83,7 +83,7 @@ export function SignInWithoutRedirectDialog({
       <DialogPortal>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader className="flex flex-col gap-2">
-            <DialogTitle>Bem vindo a RentEasy</DialogTitle>
+            <DialogTitle>Bem vindo a Renda Fácil</DialogTitle>
             {alertMessage && (
               <div className="flex flex-col gap-2 bg-orange-200 text-orange-700 font-medium rounded-sm p-2 text-sm">
                 <div className="flex items-center gap-2 text-base">

@@ -27,9 +27,10 @@ export function PropertyDetailDialogHeader() {
         <div className="flex-1 flex items-center justify-center">
           <Link href="/">
             <Image
-              src="/RentEasy.png"
+              src="/logo-rf.png"
+              // src="/RentEasy.png"
               alt=""
-              className="object-cover h-9 select-none"
+              className="object-cover select-none"
               width={120}
               height={36}
             />

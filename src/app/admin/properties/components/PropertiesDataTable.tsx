@@ -1,6 +1,5 @@
 "use client";
 
-
 import * as React from "react";
 import { toast } from "sonner";
 import { useUpdatePropertyStatus } from "@/services/hooks/use-property";
@@ -171,13 +170,15 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
         const property = row.original;
         const [updating, setUpdating] = React.useState(false);
         const updatePropertyStatus = useUpdatePropertyStatus();
-  
+
         const handleStatusChange = (newStatus: string) => {
           if (property.propertyStatus === "RENTED") {
-            toast.error("Não é possível alterar o status de um imóvel alugado.");
+            toast.error(
+              "Não é possível alterar o status de um imóvel alugado."
+            );
             return;
           }
-  
+
           setUpdating(true);
           updatePropertyStatus.mutate(
             { id: property.pkProperty, propertyStatus: newStatus },
@@ -188,18 +189,32 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
             }
           );
         };
-  
+
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" disabled={updating}>
-                {updating ? <Loader className="animate-spin w-4 h-4" /> : showPropertyStatusName(property.propertyStatus)}
+            <DropdownMenuTrigger
+              asChild
+              disabled={property.propertyStatus === "RENTED"}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={updating || property.propertyStatus === "RENTED"}
+              >
+                {updating ? (
+                  <Loader className="animate-spin w-4 h-4" />
+                ) : (
+                  showPropertyStatusName(property.propertyStatus)
+                )}
                 <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {["PUBLISHED", "STANDBY", "DENIED"].map((status) => (
-                <DropdownMenuItem key={status} onClick={() => handleStatusChange(status)}>
+                <DropdownMenuItem
+                  key={status}
+                  onClick={() => handleStatusChange(status)}
+                >
                   {showPropertyStatusName(status)}
                 </DropdownMenuItem>
               ))}
@@ -295,6 +310,12 @@ export function PropertiesDataTable({ data }: { data: PropertyAllResponse[] }) {
 
   return (
     <div>
+      <div className=" flex flex-col">
+        <h2 className="text-2xl font-medium">Imóveis</h2>
+        <p className="text-sm text-zinc-500">
+          Total de imóveis cadastrados: {data.length}
+        </p>
+      </div>
       {/* Filtros */}
       <div className="flex items-center justify-between gap-4 py-4">
         <Input

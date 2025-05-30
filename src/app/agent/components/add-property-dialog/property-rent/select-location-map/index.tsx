@@ -112,7 +112,7 @@ function SelectLocationMap() {
           toast({
             title: "Acesso negado",
             description:
-              "A Renteasy não tem permissão para mostrar sua localização.",
+              "A Renda Fácil não tem permissão para mostrar sua localização.",
             variant: "destructive",
           });
         }
